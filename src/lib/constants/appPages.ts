@@ -9,6 +9,7 @@ export const AppPages = {
   CUSTOMER_CREATE_ORDER: "/customer/order/create",
   FACTORY_ORDER_LIST: "/factory/order",
   FACTORY_NEW_ORDER_LIST: "/factory/order/new",
+  FACTORY_STOCK: "/factory/stock",
   ORDER_DETAIL: "/order",
   ACQUIRER: "/acquirer",
   MY_PAGE: "/mypage",

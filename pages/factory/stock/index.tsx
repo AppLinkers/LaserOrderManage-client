@@ -1,0 +1,1 @@
+export {default} from "@/src/components/units/factory/stock/Stock.index";
