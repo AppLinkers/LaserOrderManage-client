@@ -6,7 +6,7 @@ import {
   CUSTOMER_TYPE,
   ORDER_QUOTAITON_TYPE,
   ORDER_TYPE,
-} from "./FactoryOrderFilter.queries";
+} from "./FactoryFilter.queries";
 import { OrderTab } from "../../tabs/order/OrderTab.types";
 
 interface IFactoryNewOrderFilterProps extends IFOrderFilterProps {

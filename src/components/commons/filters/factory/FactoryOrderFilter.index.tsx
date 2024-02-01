@@ -3,8 +3,8 @@ import RedoIcon from "../../icons/RedoIcon.index";
 import Spacer from "../../spacer/Spacer.index";
 import { IFOrderFilterProps } from "../OrderFilter.types";
 import { DateValue } from "@/src/lib/hooks/useDate";
-import { ORDER_DATE_TYPE, ORDER_TYPE } from "./FactoryOrderFilter.queries";
-import OrderDateInput from "../../inputs/order/OrderDateInput.index";
+import { ORDER_DATE_TYPE, ORDER_TYPE } from "./FactoryFilter.queries";
+import DateInput from "../../inputs/date/DateInput.index";
 
 interface IFactoryOrderFilterProps extends IFOrderFilterProps {
   dateType: string | null;
@@ -15,7 +15,7 @@ interface IFactoryOrderFilterProps extends IFOrderFilterProps {
   onEndDate: (date: DateValue) => void;
 }
 
-export default function FactoryOrderFilter({
+export default function FactoryOrderFiltlater({
   orderType,
   dateType,
   startDate,
@@ -65,9 +65,9 @@ export default function FactoryOrderFilter({
             ))}
           </div>
           <S.DateInputWrapper className="flex-row-center">
-            <OrderDateInput date={startDate} setDate={onStartDate} />
+            <DateInput date={startDate} setDate={onStartDate} />
             <S.DateInputDivier className="medium20">-</S.DateInputDivier>
-            <OrderDateInput date={endDate} setDate={onEndDate} />
+            <DateInput date={endDate} setDate={onEndDate} />
           </S.DateInputWrapper>
         </div>
       </S.FilterWrapper>

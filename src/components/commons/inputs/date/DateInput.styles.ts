@@ -1,5 +1,5 @@
 import styled from "@emotion/styled";
-import { ICalenderProps } from "./OrderDateInput.types";
+import { ICalenderProps } from "./DateInput.types";
 
 export const Wrapper = styled.div`
   position: relative;

@@ -5,6 +5,8 @@ import {
   OrderType,
 } from "../OrderFilter.types";
 
+import { StockUnitType } from "../StockFilter.types";
+
 interface IOrderQuotationType {
   type: OrderQuotationType;
   key: boolean;
@@ -22,6 +24,11 @@ interface IOrderType {
 
 interface IOrderDateType {
   type: OrderDateType;
+  key: string;
+}
+
+interface IStockUnitType {
+  type: StockUnitType;
   key: string;
 }
 
@@ -43,4 +50,9 @@ export const ORDER_TYPE: IOrderType[] = [
 export const ORDER_DATE_TYPE: IOrderDateType[] = [
   { type: "거래 생성일 기준", key: "create" },
   { type: "납기일 기준", key: "delivery" },
+];
+
+export const STOCK_UNIT_TYPE: IStockUnitType[] = [
+  { type: "수량", key: "count" },
+  { type: "무게", key: "weight" },
 ];
