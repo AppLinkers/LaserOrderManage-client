@@ -2,6 +2,7 @@ import FactoryStockFilter from "@/src/components/commons/filters/factory/Factory
 import StockTab from "@/src/components/commons/tabs/stock/StockTab.index";
 import { BodyWrapper, PageTitle } from "@/src/components/commons/wrapper/BodyWrapper.styles";
 import KumohHead from "@/src/components/shared/layout/head/NextHead.index";
+import StockInfo from "./StockInfo.index";
 
 export default function Stock() {
     return (
@@ -15,6 +16,7 @@ export default function Stock() {
                     onTabClick={() => {}}
                 />
                 <FactoryStockFilter />
+                <StockInfo />
             </BodyWrapper>
         </>
     )
