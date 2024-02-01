@@ -1,11 +1,11 @@
-import * as S from "./StockTab.style";
-import { IStockTabProps } from "./StockTab.types";
+import * as S from "./IngredientTab.style";
+import { IIngredientTabProps } from "./IngredientTab.types";
 
-export default function StockTab({
+export default function IngredientTab({
   tabs,
   selectedTab,
   onTabClick,
-}: IStockTabProps) {
+}: IIngredientTabProps) {
   return (
     <S.Wrapper className="flex-center">
       {tabs.map((el) => (

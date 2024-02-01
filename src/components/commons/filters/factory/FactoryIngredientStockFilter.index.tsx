@@ -1,21 +1,21 @@
 import { DateValue } from "@/src/lib/hooks/useDate";
 import DateInput from "../../inputs/date/DateInput.index";
 import * as S from "../OrderFilter.styles";
-import { STOCK_UNIT_TYPE } from "./FactoryFilter.queries";
+import { INGREDIENT_UNIT_TYPE } from "./FactoryFilter.queries";
 
-interface IFactoryStockFilterProps {
+interface IFactoryIngredientStockFilterProps {
     date: string;
-    unit: string;
-    onDate: (selectedDate: DateValue) => void;
-    onUnit: (selectedUnit: string) => void;
-  }
+    unitType: string;
+    onDate: (date: DateValue) => void;
+    onUnitType: (type: string) => void;
+}
 
-export default function FactoryStockFilter({
+export default function FactoryIngredientStockFilter({
     date,
-    unit,
+    unitType,
     onDate,
-    onUnit
-} : IFactoryStockFilterProps) {
+    onUnitType
+} : IFactoryIngredientStockFilterProps) {
     return (
         <S.Wrapper>
             <S.HeaderWrapper>
@@ -27,12 +27,12 @@ export default function FactoryStockFilter({
             </S.FilterWrapper>
             <S.FilterWrapper className="flex-row">
                 <S.FilterLabel className="medium16">단위</S.FilterLabel>
-                {STOCK_UNIT_TYPE.map((el) => (
+                {INGREDIENT_UNIT_TYPE.map((el) => (
                     <S.Filter
                         className="medium16"
                         key={el.type}
-                        isSelect={unit === el.key}
-                        onClick={() => onUnit(el.key)}
+                        isSelect={unitType === el.key}
+                        onClick={() => onUnitType(el.key)}
                     >
                         {el.type}
                     </S.Filter>

@@ -5,7 +5,14 @@ import {
   OrderType,
 } from "../OrderFilter.types";
 
-import { StockUnitType } from "../StockFilter.types";
+import { 
+  IngredientUnitType,
+  AnalysisDataType,
+  AnalysisDateType,
+  AnalysisItemUnitType,
+  AnalysisStockItemType,
+  AnalysisPriceItemType
+ } from "../IngredientFilter.types";
 
 interface IOrderQuotationType {
   type: OrderQuotationType;
@@ -27,8 +34,33 @@ interface IOrderDateType {
   key: string;
 }
 
-interface IStockUnitType {
-  type: StockUnitType;
+interface IIngredientUnitType {
+  type: IngredientUnitType;
+  key: string;
+}
+
+interface IAnalysisDataType {
+  type: AnalysisDataType;
+  key: string;
+}
+
+interface IAnalysisDateType {
+  type: AnalysisDateType;
+  key: string;
+}
+
+interface IAnalysisItemUnitType {
+  type: AnalysisItemUnitType;
+  key: string;
+}
+
+interface IAnalysisStockItemType {
+  type: AnalysisStockItemType;
+  key: string;
+}
+
+interface IAnalysisPriceItemType {
+  type: AnalysisPriceItemType;
   key: string;
 }
 
@@ -52,7 +84,37 @@ export const ORDER_DATE_TYPE: IOrderDateType[] = [
   { type: "납기일 기준", key: "delivery" },
 ];
 
-export const STOCK_UNIT_TYPE: IStockUnitType[] = [
+export const INGREDIENT_UNIT_TYPE: IIngredientUnitType[] = [
   { type: "수량", key: "count" },
   { type: "무게", key: "weight" },
 ];
+
+export const ANALYSIS_DATA_TYPE: IAnalysisDataType[] = [
+  { type: "전체 합계", key: "total" },
+  { type: "평균", key: "average" },
+  { type: "자재 선택", key: "ingredient" }
+];
+
+export const ANALYSIS_DATE_TYPE: IAnalysisDateType[] = [
+  { type: "월간", key: "month"},
+  { type: "연간", key: "year"}, 
+]
+
+export const ANALYSIS_ITEM_UNIT_TYPE: IAnalysisItemUnitType[] = [
+  {type: "재고", key: "stock"},
+  {type: "단가", key: "price"}
+]
+
+export const ANALYSIS_STOCK_ITEM_TYPE: IAnalysisStockItemType[] = [
+  {type: "전체 보기", key: "all"},
+  {type: "입고", key: "incoming"},
+  {type: "생산", key: "production"},
+  {type: "재고", key: "stock"},
+  {type: "적정 재고", key: "optimal-stock"}
+]
+
+export const ANALYSIS_PRICE_ITEM_TYPE: IAnalysisPriceItemType[] = [
+  {type: "전체 보기", key: "all"},
+  {type: "구매 단가", key: "purchase"},
+  {type: "판매 단가", key: "sell"}
+]

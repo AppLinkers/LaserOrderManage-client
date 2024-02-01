@@ -1,5 +1,5 @@
 import { OrderTab } from "@/src/components/commons/tabs/order/OrderTab.types";
-import { StockTab } from "@/src/components/commons/tabs/stock/StockTab.types";
+import { IngredientTab } from "@/src/components/commons/tabs/ingredient/IngredientTab.types";
 import { useState } from "react";
 
 export const useOrderTab = (
@@ -19,11 +19,11 @@ export const useOrderTab = (
 };
 
 export const useStockTab = (
-  defaultTab: StockTab,
+  defaultTab: IngredientTab,
 ) => {
   const [tab, setTab] = useState(defaultTab);
 
-  const onTabClick = (tabItem: StockTab) => {
+  const onTabClick = (tabItem: IngredientTab) => {
     if (tab !== tabItem) {
       setTab(tabItem);
     }
