@@ -1,8 +1,21 @@
+import { DateValue } from "@/src/lib/hooks/useDate";
 import DateInput from "../../inputs/date/DateInput.index";
 import * as S from "../OrderFilter.styles";
 import { STOCK_UNIT_TYPE } from "./FactoryFilter.queries";
 
-export default function FactoryStockFilter() {
+interface IFactoryStockFilterProps {
+    date: string;
+    unit: string;
+    onDate: (selectedDate: DateValue) => void;
+    onUnit: (selectedUnit: string) => void;
+  }
+
+export default function FactoryStockFilter({
+    date,
+    unit,
+    onDate,
+    onUnit
+} : IFactoryStockFilterProps) {
     return (
         <S.Wrapper>
             <S.HeaderWrapper>
@@ -10,7 +23,7 @@ export default function FactoryStockFilter() {
             </S.HeaderWrapper>
             <S.FilterWrapper className="flex-row-align-center">
                 <S.FilterLabel className="medium16">기준 날짜</S.FilterLabel>
-                <DateInput date={"2017-01-01"} setDate={() => {}} />
+                <DateInput date={date} setDate={onDate} />
             </S.FilterWrapper>
             <S.FilterWrapper className="flex-row">
                 <S.FilterLabel className="medium16">단위</S.FilterLabel>
@@ -18,8 +31,8 @@ export default function FactoryStockFilter() {
                     <S.Filter
                         className="medium16"
                         key={el.type}
-                        isSelect={true}
-                        onClick={() => {}}
+                        isSelect={unit === el.key}
+                        onClick={() => onUnit(el.key)}
                     >
                         {el.type}
                     </S.Filter>

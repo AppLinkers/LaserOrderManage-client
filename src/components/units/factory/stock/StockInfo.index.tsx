@@ -1,28 +1,41 @@
+import { getCost } from "@/src/lib/utils/utils";
 import styled from "@emotion/styled"
 
-export default function StockInfo() {
+interface IFactoryStockInfoProps {
+    purchasePrice: number;
+    sellPrice: number;
+    count: number;
+    weight: number;
+}
+
+export default function StockInfo({
+    purchasePrice,
+    sellPrice,
+    count,
+    weight
+} : IFactoryStockInfoProps) {
     return (
         <Wrapper className="flex-row">
             <InfoWrapper>
                 <InfoTitle className="bold16">평균 단가</InfoTitle>
                 <InfoInnerWrapper className="flex-row">
                     <InfoLabel className="medium16">구매 단가</InfoLabel>
-                    <InfoValue className="regular16">1,000원 / 1TON</InfoValue>
+                    <InfoValue className="regular16">{`${getCost(purchasePrice)} / 1TON`}</InfoValue>
                 </InfoInnerWrapper>
                 <InfoInnerWrapper className="flex-row">
                     <InfoLabel className="medium16">판매 단가</InfoLabel>
-                    <InfoValue className="regular16">1,000원 / 1TON</InfoValue>
+                    <InfoValue className="regular16">{`${getCost(sellPrice)} / 1TON`}</InfoValue>
                 </InfoInnerWrapper>
             </InfoWrapper>
             <InfoWrapper>
                 <InfoTitle className="bold16">TOTAL 재고</InfoTitle>
                 <InfoInnerWrapper className="flex-row">
                     <InfoLabel className="medium16">수량</InfoLabel>
-                    <InfoValue className="regular16">100 개</InfoValue>
+                    <InfoValue className="regular16">{`${count.toLocaleString("ko-KR")} 개`}</InfoValue>
                 </InfoInnerWrapper>
                 <InfoInnerWrapper className="flex-row">
                     <InfoLabel className="medium16">무게</InfoLabel>
-                    <InfoValue className="regular16">100 TON</InfoValue>
+                    <InfoValue className="regular16">{`${weight.toLocaleString("ko-KR")} TON`}</InfoValue>
                 </InfoInnerWrapper>
             </InfoWrapper>
         </Wrapper>

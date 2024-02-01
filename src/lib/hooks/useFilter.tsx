@@ -150,3 +150,31 @@ export const useFactoryNewOrderFilter = () => {
     onResetFilter,
   } as const;
 };
+
+export const useFactoryIngredientStockFilter = () => {
+  const formattedDate = () => {
+    const date = new Date();
+    const year = date.getFullYear();
+    const month = `${date.getMonth() + 1}`.padStart(2, '0');
+    const day = `${date.getDate()}`.padStart(2, '0');
+    return `${year}-${month}-${day}`;
+  }
+  const [date, setDate] = useState<string>(formattedDate());
+  const [unit, setUnit] = useState("count");
+
+  const onDate = (selectedDate: DateValue) => {
+    const date = moment(selectedDate?.toString()).format("YY. MM. DD");
+    setDate(date);
+  };
+
+  const onUnit = (selectedUnit: string) => {
+    setUnit(selectedUnit);
+  }
+
+  return {
+    date,
+    unit,
+    onDate,
+    onUnit
+  } as const;
+}
