@@ -6,6 +6,57 @@ import StockInfo from "./StockInfo.index";
 import { useStockTab } from "@/src/lib/hooks/useTab";
 import { useFactoryIngredientAnalysisFilter, useFactoryIngredientStockFilter } from "@/src/lib/hooks/useFilter";
 import FactoryIngredientAnalysisFilter from "@/src/components/commons/filters/factory/FactoryIngredientAnalysisFilter.index";
+import IngredientStockList from "./list/IngredientStockList.index";
+import { IIngredientStockResponse } from "@/src/lib/apis/ingredient/Ingredient.types";
+
+const RESPONSE: IIngredientStockResponse = {
+    averagePrice: {
+        purchase: 1000,
+        sell: 1000
+    },
+    totalStock: {
+        count: 10000,
+        weight: 10000
+    },
+    ingredientList: [
+        {
+            id: 0,
+            texture: "SS-403",
+            thickness: 1.5,
+            width: 10,
+            height: 10,
+            stock: {
+                previousDay: null,
+                incoming: null,
+                production: null,
+                currentDay: 0,
+                optimal: 80
+            },
+            price: {
+                purchase: 1000,
+                sell: 1000
+            }
+        },
+        {
+            id: 1,
+            texture: "SS-403",
+            thickness: 1.5,
+            width: 10,
+            height: 10,
+            stock: {
+                previousDay: 100,
+                incoming: 10,
+                production: 20,
+                currentDay: 90,
+                optimal: null
+            },
+            price: {
+                purchase: 1000,
+                sell: 1000
+            }
+        }
+    ]
+}
 
 export default function Stock() {
     const [tab, onTabClick] = useStockTab("재고 현황");
@@ -26,20 +77,22 @@ export default function Stock() {
                     <>
                         <FactoryIngredientStockFilter {...stockFilterArgs}/>
                         <StockInfo 
-                            purchasePrice={1000}
-                            sellPrice={1000}
-                            count={10000}
-                            weight={10000}
+                            purchasePrice={RESPONSE.averagePrice.purchase}
+                            sellPrice={RESPONSE.averagePrice.sell}
+                            count={RESPONSE.totalStock.count}
+                            weight={RESPONSE.totalStock.weight}
                         />
+                        <IngredientStockList 
+                            selectedDate={stockFilterArgs.date}
+                            ingredientList={RESPONSE.ingredientList}
+                            />
                     </>
                 )}
-
                 {tab === "재고 분석" && (
                     <>
                         <FactoryIngredientAnalysisFilter {...analysisFilterArgs} />
                     </>
                 )}
-                
             </BodyWrapper>
         </>
     )

@@ -3,7 +3,7 @@ import * as S from "../OrderFilter.styles";
 import { ANALYSIS_DATA_TYPE, ANALYSIS_DATE_TYPE, ANALYSIS_ITEM_UNIT_TYPE, ANALYSIS_PRICE_ITEM_TYPE, ANALYSIS_STOCK_ITEM_TYPE, INGREDIENT_UNIT_TYPE } from "./FactoryFilter.queries";
 import Spacer from "../../spacer/Spacer.index";
 import { ChangeEvent } from "react";
-import { IIngredientListResponse } from "@/src/lib/apis/ingredient/Ingredient.types";
+import { IIngredientNameListResponse } from "@/src/lib/apis/ingredient/Ingredient.types";
 
 interface IFactoryIngredientAnalysisFilterProps {
     dataType: string;
@@ -34,7 +34,7 @@ interface IFactoryIngredientAnalysisFilterProps {
     onPriceItem: (type: string) => void;
 }
 
-const INGREDIENT_DATA: IIngredientListResponse = {
+const INGREDIENT_DATA: IIngredientNameListResponse = {
     contents: [
         {id: 0, texture: "t1", thickness: 1.5},
         {id: 1, texture: "t2", thickness: 2.5},

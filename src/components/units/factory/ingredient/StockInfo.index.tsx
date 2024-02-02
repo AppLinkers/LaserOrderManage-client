@@ -20,11 +20,11 @@ export default function StockInfo({
                 <InfoTitle className="bold16">평균 단가</InfoTitle>
                 <InfoInnerWrapper className="flex-row">
                     <InfoLabel className="medium16">구매 단가</InfoLabel>
-                    <InfoValue className="regular16">{`${getCost(purchasePrice)} / 1TON`}</InfoValue>
+                    <InfoValue className="regular16">{`${getCost(purchasePrice)} / 1 t`}</InfoValue>
                 </InfoInnerWrapper>
                 <InfoInnerWrapper className="flex-row">
                     <InfoLabel className="medium16">판매 단가</InfoLabel>
-                    <InfoValue className="regular16">{`${getCost(sellPrice)} / 1TON`}</InfoValue>
+                    <InfoValue className="regular16">{`${getCost(sellPrice)} / 1 t`}</InfoValue>
                 </InfoInnerWrapper>
             </InfoWrapper>
             <InfoWrapper>
@@ -35,7 +35,7 @@ export default function StockInfo({
                 </InfoInnerWrapper>
                 <InfoInnerWrapper className="flex-row">
                     <InfoLabel className="medium16">무게</InfoLabel>
-                    <InfoValue className="regular16">{`${weight.toLocaleString("ko-KR")} TON`}</InfoValue>
+                    <InfoValue className="regular16">{`${weight.toLocaleString("ko-KR")} t`}</InfoValue>
                 </InfoInnerWrapper>
             </InfoWrapper>
         </Wrapper>

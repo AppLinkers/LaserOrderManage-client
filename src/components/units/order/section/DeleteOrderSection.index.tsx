@@ -12,14 +12,9 @@ export default function DeleteOrderSection({
 
   return (
     <>
-      <S.Wrapper>
-        <S.TitleWrapper>
-          <S.Title className="bold18">거래 삭제</S.Title>
-        </S.TitleWrapper>
-        <DeleteButton className="medium16" onClick={() => setShowModal(true)}>
-          거래 삭제
-        </DeleteButton>
-      </S.Wrapper>
+      <DeleteButton className="medium16" onClick={() => setShowModal(true)}>
+        거래 삭제
+      </DeleteButton>
       <DeleteOrderModal
         isOpen={showModal}
         orderName={orderName}
