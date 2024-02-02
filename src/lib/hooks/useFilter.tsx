@@ -183,18 +183,14 @@ export const useFactoryIngredientAnalysisFilter = () => {
   const [dataType, setDataType] = useState("");
   const [ingredientId, setIngredientId] = useState<number | string>("");
   const [dateType, setDateType] = useState("");
-  const [startYear, setStartYear] = useState(2024);
-  const [startMonth, setStartMonth] = useState(1);
-  const [endYear, setEndYear] = useState(2024);
-  const [endMonth, setEndMonth] = useState(1);
+  const [startYear, setStartYear] = useState("");
+  const [startMonth, setStartMonth] = useState("");
+  const [endYear, setEndYear] = useState("");
+  const [endMonth, setEndMonth] = useState("");
   const [unitType, setUnitType] = useState("");
   const [itemType, setItemType] = useState("");
   const [stockItemList, setStockItemList] = useState<string[]>([]);
   const [priceItemList, setPriceItemList] = useState<string[]>([]);
-  const [startYearRange, setStartYearRange] = useState<number[]>([]);
-  const [endYearRange, setEndYearRange] = useState<number[]>([]);
-  const [startMonthRange, setStartMonthRange] = useState<number[]>([]);
-  const [endMonthRange, setEndMonthRange] = useState<number[]>([]);
 
   const onDataType = (selectedData: string) => {
     setDataType(selectedData);
@@ -205,33 +201,23 @@ export const useFactoryIngredientAnalysisFilter = () => {
   }
 
   const onDateType = (selectedDateType : string) => {
-    const date = new Date();
-    if (selectedDateType === "year") {
-      setStartYearRange([2024, 2023, 2022]);
-      setEndYearRange([2024, 2023]);
-    } else {
-      setStartYearRange([2024, 2023, 2022]);
-      setEndYearRange([2024, 2023]);
-      setStartMonthRange([1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12]);
-      setEndMonthRange([1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12]);
-    }
     setDateType(selectedDateType);
   }
 
-  const onStartYear = () => {
-
+  const onStartYear = (selectedStartYear : string) => {
+    setStartYear(selectedStartYear);
   }
 
-  const onStartMonth = () => {
-
+  const onStartMonth = (selectedStartMonth : string) => {
+    setStartMonth(selectedStartMonth);
   }
 
-  const onEndYear = () => {
-
+  const onEndYear = (selectedEndYear : string) => {
+    setEndYear(selectedEndYear);
   }
 
-  const onEndMonth = () => {
-
+  const onEndMonth = (selectedEndMonth : string) => {
+    setEndMonth(selectedEndMonth);
   }
 
   const onUnitType = (selectedUnitType : string) => {
@@ -298,10 +284,6 @@ export const useFactoryIngredientAnalysisFilter = () => {
     dataType,
     ingredientId,
     dateType,
-    startYearRange,
-    startMonthRange,
-    endYearRange,
-    endMonthRange,
     startYear,
     startMonth,
     endYear,
