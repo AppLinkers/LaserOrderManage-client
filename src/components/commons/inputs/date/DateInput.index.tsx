@@ -1,15 +1,15 @@
-import * as S from "./OrderDateInput.styles";
+import * as S from "./DateInput.styles";
 import Calendar from "react-calendar";
 import "react-calendar/dist/Calendar.css";
 import { useState } from "react";
-import { IOrderDateInputProps } from "./OrderDateInput.types";
+import { IDateInputProps } from "./DateInput.types";
 import { DateValue } from "@/src/lib/hooks/useDate";
 import CalendarIcon from "../../icons/CalendarIcon.index";
 
-export default function OrderDateInput({
+export default function DateInput({
   date,
   setDate,
-}: IOrderDateInputProps) {
+}: IDateInputProps) {
   const [isOpen, setIsOpen] = useState(false);
 
   const handleDateChange = (selectedDate: DateValue) => {

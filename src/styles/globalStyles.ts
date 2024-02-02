@@ -184,6 +184,11 @@ export const globalStyles = css`
     flex-direction: row;
     justify-content: center;
   }
+  .flex-row-end {
+    display: flex;
+    flex-direction: row;
+    justify-content: end;
+  }
   .flex-row-bottom {
     display: flex;
     flex-direction: row;

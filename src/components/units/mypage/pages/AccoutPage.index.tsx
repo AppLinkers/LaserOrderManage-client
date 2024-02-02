@@ -398,22 +398,26 @@ export default function AccountPage({ role }: IAccoutPageProps) {
               <S.Switch isActive={notify}></S.Switch>
             </S.SwitchWrapper>
           </S.InfoWrapper>
-          <Spacer width="100%" height="20px" />
-          <S.InfoWrapper className="flex-row-between-center">
-            <div>
-              <S.InfoTitle className="medium16">회원 탈퇴</S.InfoTitle>
-              <Spacer width="100%" height="14px" />
-              <S.InfoAnnounce className="regular14">
-                금오거래센터에서 탈퇴합니다
-              </S.InfoAnnounce>
-            </div>
-            <S.WithDrawButton
-              className="regular14"
-              onClick={() => setShowWithDrawModal(true)}
-            >
-              탈퇴
-            </S.WithDrawButton>
-          </S.InfoWrapper>
+          {role === "ROLE_CUSTOMER" && (
+            <>
+              <Spacer width="100%" height="20px" />
+              <S.InfoWrapper className="flex-row-between-center">
+                <div>
+                  <S.InfoTitle className="medium16">회원 탈퇴</S.InfoTitle>
+                  <Spacer width="100%" height="14px" />
+                  <S.InfoAnnounce className="regular14">
+                    금오거래센터에서 탈퇴합니다
+                  </S.InfoAnnounce>
+                </div>
+                <S.WithDrawButton
+                  className="regular14"
+                  onClick={() => setShowWithDrawModal(true)}
+                >
+                  탈퇴
+                </S.WithDrawButton>
+              </S.InfoWrapper>
+            </>
+          )}
         </S.BodyWrapper>
       </S.Wrapper>
       <EditPasswordModal

@@ -51,6 +51,14 @@ export const getCost = (value: number) => {
   return `${cost}원`;
 };
 
+export const getNumberSplit = (value: string) => {
+  return `${Number(value).toLocaleString("ko-KR")}`;
+}
+
+export const getNumberFromSplitNumber = (value: string) => {
+  return value.replace(/,/g, '');
+}
+
 export const getCustomerInfo = (
   name: string | null,
   company: string | null,
