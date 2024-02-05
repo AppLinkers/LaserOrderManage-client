@@ -1,5 +1,5 @@
 import { axiosPrivate } from "../axios";
-import { IIngredientStockResponse } from "./Ingredient.types";
+import { IIngredientRequest, IIngredientStockResponse } from "./Ingredient.types";
 
 export const IngredientApi = {
     GET_INGREDIENT_STOCK: async (
@@ -12,5 +12,14 @@ export const IngredientApi = {
         );
         return response.data;
     },
+    POST_INGREDIENT: async (
+        payload: IIngredientRequest,
+    ): Promise<null> => {
+        const response = await axiosPrivate.post(
+            "/factory/ingredient",
+            payload
+        );
+        return response.data;
+    }
 
 }

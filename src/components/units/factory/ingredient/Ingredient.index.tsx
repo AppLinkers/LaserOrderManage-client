@@ -134,6 +134,7 @@ export default function Stock() {
                                 <IngredientStockList 
                                     selectedDate={stockFilterArgs.date}
                                     ingredientList={data.ingredientList}
+                                    refetch={refetch}
                                 />
                             </>
                         )}

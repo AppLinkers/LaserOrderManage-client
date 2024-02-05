@@ -107,9 +107,9 @@ export const EditInputWrapper = styled.div<IInputWrapperProps>`
 `;
 
 export const EditInputSizeWrapper = styled.div<IInputWrapperProps>`
-  width: 45px;
+  width: 50px;
   height: 32px;
-  padding: 0 6px;
+  padding: 0 12px;
   border: 1px solid 
     ${(props) => props.isFocus ? "var(--color-black)" : "var(--color-mediumGray)"};
   border-radius: var(--border-radius);

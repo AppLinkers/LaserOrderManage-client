@@ -8,13 +8,17 @@ import { event } from "@/src/lib/constants/gtags";
 import { getNumberFromSplitNumber, getNumberSplit } from "@/src/lib/utils/utils";
 import Spacer from "@/src/components/commons/spacer/Spacer.index";
 import RedoIcon from "@/src/components/commons/icons/RedoIcon.index";
+import { IIngredientRequest } from "@/src/lib/apis/ingredient/Ingredient.types";
+import { IngredientApi } from "@/src/lib/apis/ingredient/IngredientApi";
+import { useMutation } from "@tanstack/react-query";
+import { useToastify } from "@/src/lib/hooks/useToastify";
 
 interface IIngredientCreateBottombarProps extends IIngredientBottombarProps {
-    onSubmit: () => void;
     onClose: () => void;
+    refetch: () => void;
 }
 
-export default function IngredientCreateBottombar({show, onSubmit, onClose}: IIngredientCreateBottombarProps) {
+export default function IngredientCreateBottombar({show, onClose, refetch}: IIngredientCreateBottombarProps) {
     const [texture, onChangeTexture, setTexture] = useInput("");
     const [textureFocus, setTextureFocus] = useState(false);
     const [thickness, onChangeThickness, setThickness] = useInputWithRegex(decimalNumberRegex, "");
@@ -31,12 +35,22 @@ export default function IngredientCreateBottombar({show, onSubmit, onClose}: IIn
     const [sellPriceFocus, setSellPriceFocus] = useState(false);
     const [optimalStock, onChangeOptimalStock, setOptimalStock] = useInputWithRegex(numberRegex, "");
     const [optimalStockFocus, setOptimalStockFocus] = useState(false);
+    const submitAvailable = 
+        texture !== "" &&
+        thickness !== "" &&
+        width !== "" &&
+        height !== "" &&
+        weight !== "" &&
+        purchasePrice !== "" &&
+        sellPrice !== "";
+
+    const { setToast } = useToastify();
 
     const customOnChangeThickness = (event : ChangeEvent<HTMLInputElement>) => {
         if (thickness.length === 0 && event.target.value === '.') {
             return;
         }
-        if (thickness.includes('.') && event.target.value.at(-1) === '.') {
+        if ((event.target.value.match(/\./g) || []).length > 1) {
             return;
         }
         onChangeThickness(event);
@@ -66,6 +80,35 @@ export default function IngredientCreateBottombar({show, onSubmit, onClose}: IIn
         setPurchasePrice("")
         setSellPrice("")
         setOptimalStock("")
+    }
+
+    const { mutate: postMutate } = useMutation({
+        mutationFn: IngredientApi.POST_INGREDIENT,
+        onSuccess: () => {
+            refetch();
+            onClose();
+            setToast({ comment: "자재를 추가했어요" });
+        },
+        onError: () => {
+            setToast({ comment: "자재 등록에 실패했어요" });
+        },
+    });
+
+    const onSubmit = () => {
+        const payload: IIngredientRequest = {
+            texture: texture,
+            thickness: Number(thickness),
+            width: Number(width),
+            height: Number(height),
+            weight: Number(weight),
+            price: {
+                purchase: Number(purchasePrice),
+                sell: Number(sellPrice)
+            },
+            optimalStock: Number(optimalStock)
+        }
+
+        postMutate(payload);
     }
 
     return (
@@ -128,6 +171,7 @@ export default function IngredientCreateBottombar({show, onSubmit, onClose}: IIn
                                         isFocus={widthFocus}
                                     >
                                         <S.EditInput
+                                            placeholder="가로"
                                             value={width}
                                             maxLength={3}
                                             onChange={onChangeWidth}
@@ -141,6 +185,7 @@ export default function IngredientCreateBottombar({show, onSubmit, onClose}: IIn
                                         isFocus={heightFocus}
                                     >
                                         <S.EditInput
+                                            placeholder="세로"
                                             value={height}
                                             maxLength={3}
                                             onChange={onChangeHeight}
@@ -184,7 +229,7 @@ export default function IngredientCreateBottombar({show, onSubmit, onClose}: IIn
                                         >
                                             <S.EditInput
                                                 placeholder="금액 입력"
-                                                value={getNumberSplit(purchasePrice)}
+                                                value={purchasePrice === "" ? "" : getNumberSplit(purchasePrice)}
                                                 maxLength={8}
                                                 onChange={customOnChangePurchasePrice}
                                                 onFocus={() => setPurchasePriceFocus(true)}
@@ -203,7 +248,7 @@ export default function IngredientCreateBottombar({show, onSubmit, onClose}: IIn
                                         >
                                             <S.EditInput
                                                 placeholder="금액 입력"
-                                                value={getNumberSplit(sellPrice)}
+                                                value={sellPrice === "" ? "" : getNumberSplit(sellPrice)}
                                                 maxLength={8}
                                                 onChange={customOnChangeSellPrice}
                                                 onFocus={() => setSellPriceFocus(true)}
@@ -227,7 +272,7 @@ export default function IngredientCreateBottombar({show, onSubmit, onClose}: IIn
                                         >
                                             <S.EditInput
                                                 placeholder="수량 입력"
-                                                value={getNumberSplit(optimalStock)}
+                                                value={optimalStock === "" ? "" : getNumberSplit(optimalStock)}
                                                 maxLength={8}
                                                 onChange={customOnChangeOptimalStock}
                                                 onFocus={() => setOptimalStockFocus(true)}
@@ -250,6 +295,7 @@ export default function IngredientCreateBottombar({show, onSubmit, onClose}: IIn
                         <S.SubmitButton
                             className="bold14"
                             onClick={onSubmit}
+                            disabled={!submitAvailable}
                         >
                         저장하기
                         </S.SubmitButton>

@@ -45,6 +45,16 @@ export type IngredientName = {
     thickness: number;
 }
 
+export type IIngredientRequest = {
+    texture: string;
+    thickness: number;
+    width: number;
+    height: number;
+    weight: number;
+    price: Price;
+    optimalStock: number;
+}
+
 export type IIngredientNameListResponse = IBaseListSimpleResponse<IngredientName>;
 
 export type IIngredientGraphItemListResponse = {
