@@ -5,40 +5,68 @@ import Spacer from "../../spacer/Spacer.index";
 import { ChangeEvent } from "react";
 import { useQuery } from "@tanstack/react-query";
 import { IngredientApi } from "@/src/lib/apis/ingredient/IngredientApi";
-
-interface IFactoryIngredientAnalysisFilterProps {
-    dataType: string;
-    ingredientId: number | string;
-    dateType: string;
-    startYear: string;
-    startMonth: string;
-    endYear: string;
-    endMonth: string;
-    unitType: string;
-    itemType: string;
-    stockItemList: string[];
-    priceItemList: string[];
-    onDataType: (type: string) => void;
-    onIngredient: (event: ChangeEvent<HTMLSelectElement>) => void;
-    onDateType: (type: string) => void;
-    onStartYear: (type: string) => void;
-    onStartMonth: (type: string) => void;
-    onEndYear: (type: string) => void;
-    onEndMonth: (type: string) => void;
-    onUnitType: (type: string) => void;
-    onItemType: (type: string) => void;
-    onStockItem: (type: string) => void;
-    onPriceItem: (type: string) => void;
-}
+import { useFactoryIngredientAnalysisFilter } from "@/src/lib/hooks/useFilter";
+import { useToastify } from "@/src/lib/hooks/useToastify";
+import { IIngredientGraphItemListResponse } from "@/src/lib/apis/ingredient/Ingredient.types";
 
 const yearRange = Array.from({ length: new Date().getFullYear() - 2024 + 1 }, (_, i) => 2024 + i);
 const monthRange = Array.from({ length: 12}, (_, i) => 1 + i);
 
-export default function FactoryIngredientAnalysisFilter(props: IFactoryIngredientAnalysisFilterProps) {
-    const { data, refetch } = useQuery({
+interface IFactoryIngredientAnalysisFilterProps {
+    setAnalysisData: (ingredientGraphItemListResponse : IIngredientGraphItemListResponse) => void;
+}
+
+export default function FactoryIngredientAnalysisFilter({setAnalysisData} : IFactoryIngredientAnalysisFilterProps) {
+    const { data : ingredientListData, refetch : ingredientListRefetch} = useQuery({
         queryKey: ["getIngredient"],
         queryFn: () => IngredientApi.GET_INGREDIENT_LIST(),
     });
+    const analysisFilterArgs = useFactoryIngredientAnalysisFilter();
+    const searchAvailable = 
+        analysisFilterArgs.dataType !== "" &&
+        (analysisFilterArgs.dataType === "ingredient" ? analysisFilterArgs.ingredientId !== "" : true) &&
+        analysisFilterArgs.dateType !== "" &&
+        analysisFilterArgs.startYear !== "" &&
+        analysisFilterArgs.endYear !== "" &&
+        (analysisFilterArgs.dateType === "month" ? ((analysisFilterArgs.startMonth !== "") && (analysisFilterArgs.endMonth !== "")) : true) &&
+        analysisFilterArgs.unitType !== "" &&
+        analysisFilterArgs.itemType !== "" &&
+        (analysisFilterArgs.itemType === "stock" ? (analysisFilterArgs.stockItemList.length > 0) : true) &&
+        (analysisFilterArgs.itemType === "price" ? (analysisFilterArgs.priceItemList.length > 0) : true);
+
+    const { setToast } = useToastify();
+
+    const formattedDate = (dateType : string, year : string, month : string) => {
+        const formattedMonth = dateType === "year" ? "01" : month.padStart(2, '0');
+
+        // "YYYY-MM" 형식으로 결과를 반환합니다.
+        return `${year}-${formattedMonth}`;
+    }
+
+    const { data : analysisData, refetch : analaysisRefetch} = useQuery({
+        queryKey: ["getAnalysis"],
+        queryFn: () => IngredientApi.GET_INGREDIENT_ANALYSIS(
+            analysisFilterArgs.dataType,
+            Number(analysisFilterArgs.ingredientId),
+            analysisFilterArgs.dateType,
+            formattedDate(analysisFilterArgs.dateType, analysisFilterArgs.startYear, analysisFilterArgs.startMonth),
+            formattedDate(analysisFilterArgs.dateType, analysisFilterArgs.endYear, analysisFilterArgs.endMonth),
+            analysisFilterArgs.unitType,
+            analysisFilterArgs.itemType,
+            analysisFilterArgs.stockItemList.join(","),
+            analysisFilterArgs.priceItemList.join(",")
+        ),
+        enabled: false
+    })
+
+    const onSearch = () => {
+        if (!searchAvailable) {
+            setToast({ comment: "모든 조회 필터를 선택해주세요"});
+            return;
+        }
+        analaysisRefetch();
+        setAnalysisData(analysisData!);
+    }
 
     return (
         <Wrapper>
@@ -52,11 +80,11 @@ export default function FactoryIngredientAnalysisFilter(props: IFactoryIngredien
                     <S.Filter
                         className="medium16"
                         key={el.type}
-                        isSelect={props.dataType === el.key}
+                        isSelect={analysisFilterArgs.dataType === el.key}
                         onClick={() => {
-                            props.onDataType(el.key)
+                            analysisFilterArgs.onDataType(el.key)
                             if (el.key === "ingredient") {
-                                refetch();
+                                ingredientListRefetch();
                             }
                         }}
                     >
@@ -67,14 +95,14 @@ export default function FactoryIngredientAnalysisFilter(props: IFactoryIngredien
                         <Select 
                             width={200} 
                             marginLeft={16} 
-                            value={props.ingredientId}
-                            onChange={props.onIngredient}
-                            disabled={props.dataType !== "ingredient"}
+                            value={analysisFilterArgs.ingredientId}
+                            onChange={analysisFilterArgs.onIngredient}
+                            disabled={analysisFilterArgs.dataType !== "ingredient"}
                         >
                             <Option value={""} disabled hidden>
                                 자재를 선택해주세요
                             </Option>
-                            {data?.contents.map((el) => (
+                            {ingredientListData?.contents.map((el) => (
                                 <Option key={el.id} value={el.id}>
                                 {`${el.texture} - ${el.thickness} T`}
                             </Option>
@@ -89,14 +117,14 @@ export default function FactoryIngredientAnalysisFilter(props: IFactoryIngredien
                     <S.Filter
                         className="medium16"
                         key={el.type}
-                        isSelect={props.dateType === el.key}
-                        onClick={() => props.onDateType(el.key)}
+                        isSelect={analysisFilterArgs.dateType === el.key}
+                        onClick={() => analysisFilterArgs.onDateType(el.key)}
                     >
                         {el.type}
                     </S.Filter>
                     ))}
                     <SelectWrapper>
-                        <Select width={100} marginLeft={16} value={props.startYear} onChange={(event) => props.onStartYear(event.target.value)} disabled={props.dateType !== "year" && props.dateType !== "month"}>
+                        <Select width={100} marginLeft={16} value={analysisFilterArgs.startYear} onChange={(event) => analysisFilterArgs.onStartYear(event.target.value)} disabled={analysisFilterArgs.dateType !== "year" && analysisFilterArgs.dateType !== "month"}>
                             <Option value={""} disabled hidden>
                                 년
                             </Option>
@@ -107,9 +135,9 @@ export default function FactoryIngredientAnalysisFilter(props: IFactoryIngredien
                             ))}
                         </Select>
                     </SelectWrapper>
-                    {props.dateType === "month" && (
+                    {analysisFilterArgs.dateType === "month" && (
                         <SelectWrapper>
-                            <Select width={60} marginLeft={4} value={props.startMonth} onChange={(event) => props.onStartMonth(event.target.value)}>
+                            <Select width={60} marginLeft={4} value={analysisFilterArgs.startMonth} onChange={(event) => analysisFilterArgs.onStartMonth(event.target.value)}>
                                 <Option value={""} disabled hidden>
                                     월
                                 </Option>
@@ -121,9 +149,9 @@ export default function FactoryIngredientAnalysisFilter(props: IFactoryIngredien
                             </Select>
                         </SelectWrapper>
                     )}
-                    <DateInputDivider dateType={props.dateType} className="medium20">-</DateInputDivider>
+                    <DateInputDivider dateType={analysisFilterArgs.dateType} className="medium20">-</DateInputDivider>
                     <SelectWrapper>
-                        <Select width={100} marginLeft={0} value={props.endYear} onChange={(event) => props.onEndYear(event.target.value)} disabled={props.dateType !== "year" && props.dateType !== "month"}>
+                        <Select width={100} marginLeft={0} value={analysisFilterArgs.endYear} onChange={(event) => analysisFilterArgs.onEndYear(event.target.value)} disabled={analysisFilterArgs.dateType !== "year" && analysisFilterArgs.dateType !== "month"}>
                             <Option value={""} disabled hidden>
                                 년
                             </Option>
@@ -134,9 +162,9 @@ export default function FactoryIngredientAnalysisFilter(props: IFactoryIngredien
                             ))}
                         </Select>
                     </SelectWrapper>
-                    {props.dateType === "month" && (
+                    {analysisFilterArgs.dateType === "month" && (
                         <SelectWrapper>
-                            <Select width={60} marginLeft={4} value={props.endMonth} onChange={(event) => props.onEndMonth(event.target.value)}>
+                            <Select width={60} marginLeft={4} value={analysisFilterArgs.endMonth} onChange={(event) => analysisFilterArgs.onEndMonth(event.target.value)}>
                                 <Option value={""} disabled hidden>
                                     월
                                 </Option>
@@ -155,8 +183,8 @@ export default function FactoryIngredientAnalysisFilter(props: IFactoryIngredien
                     <S.Filter
                         className="medium16"
                         key={el.type}
-                        isSelect={props.unitType === el.key}
-                        onClick={() => props.onUnitType(el.key)}
+                        isSelect={analysisFilterArgs.unitType === el.key}
+                        onClick={() => analysisFilterArgs.onUnitType(el.key)}
                     >
                         {el.type}
                     </S.Filter>
@@ -170,36 +198,36 @@ export default function FactoryIngredientAnalysisFilter(props: IFactoryIngredien
                                 <S.Filter
                                     className="medium16"
                                     key={el.type}
-                                    isSelect={props.itemType === el.key}
-                                    onClick={() => props.onItemType(el.key)}
+                                    isSelect={analysisFilterArgs.itemType === el.key}
+                                    onClick={() => analysisFilterArgs.onItemType(el.key)}
                                 >
                                     {el.type}
                                 </S.Filter>
                             ))}
                         </div>
                         <Spacer width="100%" height="10px" />
-                        {props.itemType === "stock" && (
+                        {analysisFilterArgs.itemType === "stock" && (
                             <>
                             {ANALYSIS_STOCK_ITEM_TYPE.map((el) => (
                                 <S.FilterSmall
                                 className="medium14"
                                 key={el.type}
-                                isSelect={props.stockItemList.includes(el.key)}
-                                onClick={() => props.onStockItem(el.key)}
+                                isSelect={analysisFilterArgs.stockItemList.includes(el.key)}
+                                onClick={() => analysisFilterArgs.onStockItem(el.key)}
                               >
                                 {el.type}
                               </S.FilterSmall>
                             ))}
                             </>
                         )}
-                        {props.itemType === "price" && (
+                        {analysisFilterArgs.itemType === "price" && (
                             <>
                             {ANALYSIS_PRICE_ITEM_TYPE.map((el) => (
                                 <S.FilterSmall
                                 className="medium14"
                                 key={el.type}
-                                isSelect={props.priceItemList.includes(el.key)}
-                                onClick={() => props.onPriceItem(el.key)}
+                                isSelect={analysisFilterArgs.priceItemList.includes(el.key)}
+                                onClick={() => analysisFilterArgs.onPriceItem(el.key)}
                               >
                                 {el.type}
                               </S.FilterSmall>
@@ -210,7 +238,12 @@ export default function FactoryIngredientAnalysisFilter(props: IFactoryIngredien
                     
                 </S.FilterWrapper>
             </FilterWrapper>
-            <SearchButton className="bold14">조회하기</SearchButton>
+            <SearchButton 
+                className="bold14"
+                onClick={onSearch}
+            >
+            조회하기
+            </SearchButton>
         </Wrapper>
     );
 }

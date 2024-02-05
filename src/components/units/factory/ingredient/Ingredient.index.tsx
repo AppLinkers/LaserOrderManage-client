@@ -15,6 +15,7 @@ import { GetServerSideProps } from "next";
 import { setSsrAxiosHeader } from "@/src/lib/utils/setSsrAxiosHeader";
 import { getNowDate, getParamDate } from "@/src/lib/utils/utils";
 import { AppPages } from "@/src/lib/constants/appPages";
+import { useState } from "react";
 
 const RESPONSE_FOR_GRAPH: IIngredientGraphItemListResponse = {
     timeUnit : "month",
@@ -46,9 +47,8 @@ const RESPONSE_FOR_GRAPH: IIngredientGraphItemListResponse = {
 export default function Stock() {
     const [tab, onTabClick] = useStockTab("재고 현황");
     const stockFilterArgs = useFactoryIngredientStockFilter();
-    const analysisFilterArgs = useFactoryIngredientAnalysisFilter();
 
-    const {data, refetch} = useQuery({
+    const {data : stockData, refetch : stockRefetch} = useQuery({
         queryKey: [
             "ingredientStock",
             stockFilterArgs.unitType,
@@ -60,6 +60,8 @@ export default function Stock() {
                 stockFilterArgs.unitType
             ),
     });
+
+    const [analysisData, setAnalysisData] = useState<IIngredientGraphItemListResponse>();
 
     return (
         <>
@@ -74,18 +76,18 @@ export default function Stock() {
                 {tab === "재고 현황" && (
                     <>
                         <FactoryIngredientStockFilter {...stockFilterArgs}/>
-                        {data && (
+                        {stockData && (
                             <>
                                 <StockInfo 
-                                    purchasePrice={data.averagePrice.purchase}
-                                    sellPrice={data.averagePrice.sell}
-                                    count={data.totalStock.count}
-                                    weight={data.totalStock.weight}
+                                    purchasePrice={stockData.averagePrice.purchase}
+                                    sellPrice={stockData.averagePrice.sell}
+                                    count={stockData.totalStock.count}
+                                    weight={stockData.totalStock.weight}
                                 />
                                 <IngredientStockList 
                                     selectedDate={stockFilterArgs.date}
-                                    ingredientList={data.ingredientList}
-                                    refetch={refetch}
+                                    ingredientList={stockData.ingredientList}
+                                    refetch={stockRefetch}
                                 />
                             </>
                         )}
@@ -93,13 +95,13 @@ export default function Stock() {
                 )}
                 {tab === "재고 분석" && (
                     <>
-                        <FactoryIngredientAnalysisFilter {...analysisFilterArgs} />
-                        {RESPONSE_FOR_GRAPH && (
+                        <FactoryIngredientAnalysisFilter setAnalysisData={setAnalysisData}/>
+                        {analysisData && (
                             <IngredientAnalysisGraph 
-                                timeUnit={RESPONSE_FOR_GRAPH.timeUnit}
-                                startDate={RESPONSE_FOR_GRAPH.startDate}
-                                endDate={RESPONSE_FOR_GRAPH.endDate}
-                                graphItemList={RESPONSE_FOR_GRAPH.itemList}
+                                timeUnit={analysisData.timeUnit}
+                                startDate={analysisData.startDate}
+                                endDate={analysisData.endDate}
+                                graphItemList={analysisData.itemList}
                             ></IngredientAnalysisGraph>
                         )}
                     </>
