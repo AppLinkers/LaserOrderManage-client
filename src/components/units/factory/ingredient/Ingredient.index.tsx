@@ -17,33 +17,6 @@ import { getNowDate, getParamDate } from "@/src/lib/utils/utils";
 import { AppPages } from "@/src/lib/constants/appPages";
 import { useState } from "react";
 
-const RESPONSE_FOR_GRAPH: IIngredientGraphItemListResponse = {
-    timeUnit : "month",
-    startDate : "2024-01",
-    endDate : "2024-12",
-    itemList : {
-        contents : [
-            {
-                item : "입고",
-                data : [30, 50, 40, 20, 60, 30, 10, 80, 90, 30, 90, 100]
-            },
-            {
-                item : "생산",
-                data : [70, 30, 10, 30, 70, 20, 30, 60, 40, 80, 20, 30]
-            },
-            {
-                item : "재고",
-                data : [100, 20, 40, 30, 60, 30, 40, 70, 80, 100, 30, 20]
-            },
-            {
-                item : "적정 재고",
-                data : [20, 50, 20, 70, 40, 50, 20, 70, 10, 80, 100, 40]
-            }
-        ],
-        totalElements : 4
-    }
-}
-
 export default function Stock() {
     const [tab, onTabClick] = useStockTab("재고 현황");
     const stockFilterArgs = useFactoryIngredientStockFilter();
