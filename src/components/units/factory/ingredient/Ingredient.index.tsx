@@ -16,55 +16,6 @@ import { setSsrAxiosHeader } from "@/src/lib/utils/setSsrAxiosHeader";
 import { getNowDate, getParamDate } from "@/src/lib/utils/utils";
 import { AppPages } from "@/src/lib/constants/appPages";
 
-const RESPONSE_FOR_STOCK: IIngredientStockResponse = {
-    averagePrice: {
-        purchase: 1000,
-        sell: 1000
-    },
-    totalStock: {
-        count: 10000,
-        weight: 10000
-    },
-    ingredientList: [
-        {
-            id: 0,
-            texture: "SS-403",
-            thickness: 1.5,
-            width: 10,
-            height: 10,
-            stock: {
-                previousDay: null,
-                incoming: null,
-                production: null,
-                currentDay: 0,
-                optimal: 80
-            },
-            price: {
-                purchase: 1000,
-                sell: 1000
-            }
-        },
-        {
-            id: 1,
-            texture: "SS-403",
-            thickness: 1.5,
-            width: 10,
-            height: 10,
-            stock: {
-                previousDay: 100,
-                incoming: 10,
-                production: 20,
-                currentDay: 90,
-                optimal: null
-            },
-            price: {
-                purchase: 1000,
-                sell: 1000
-            }
-        }
-    ]
-}
-
 const RESPONSE_FOR_GRAPH: IIngredientGraphItemListResponse = {
     timeUnit : "month",
     startDate : "2024-01",
@@ -103,11 +54,11 @@ export default function Stock() {
             stockFilterArgs.unitType,
             stockFilterArgs.dateFieldChanged
         ],
-        queryFn: () => RESPONSE_FOR_STOCK
-            // IngredientApi.GET_INGREDIENT_STOCK(
-            //     getParamDate(stockFilterArgs.date),
-            //     stockFilterArgs.unitType
-            // ),
+        queryFn: () => 
+            IngredientApi.GET_INGREDIENT_STOCK(
+                getParamDate(stockFilterArgs.date),
+                stockFilterArgs.unitType
+            ),
     });
 
     return (
