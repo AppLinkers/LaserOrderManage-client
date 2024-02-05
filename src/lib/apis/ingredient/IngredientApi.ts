@@ -33,6 +33,12 @@ export const IngredientApi = {
             payload,
         );
         return response.data;
+    },
+    DELETE_INGREDIENT: async (id: number): Promise<null> => {
+        const response = await axiosPrivate.delete(
+            `/factory/ingredient/${id}`,
+        );
+        return response.data;
     }
 
 }

@@ -113,8 +113,19 @@ export default function IngredientEditBottombar({show, ingredient, onClose, refe
         editMutate({ id: ingredient.id, payload: payload});
     }
 
-    const onDelete = () => {
+    const { mutate: deleteMutate } = useMutation({
+        mutationFn: IngredientApi.DELETE_INGREDIENT,
+        onSuccess: () => {
+            refetch();
+            setToast({ comment: "자재를 삭제했어요" });
+        },
+        onError: () => {
+            setToast({ comment: "자재 삭제에 실패했어요" });
+        }
+    })
 
+    const onDelete = () => {
+        deleteMutate(ingredient.id);
     }
 
     return (
