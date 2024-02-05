@@ -9,6 +9,12 @@ import FactoryIngredientAnalysisFilter from "@/src/components/commons/filters/fa
 import IngredientStockList from "./list/IngredientStockList.index";
 import { IIngredientGraphItemListResponse, IIngredientStockResponse } from "@/src/lib/apis/ingredient/Ingredient.types";
 import IngredientAnalysisGraph from "./graph/IngredientAnalysisGraph.index";
+import { QueryClient, dehydrate, useQuery } from "@tanstack/react-query";
+import { IngredientApi } from "@/src/lib/apis/ingredient/IngredientApi";
+import { GetServerSideProps } from "next";
+import { setSsrAxiosHeader } from "@/src/lib/utils/setSsrAxiosHeader";
+import { getNowDate, getParamDate } from "@/src/lib/utils/utils";
+import { AppPages } from "@/src/lib/constants/appPages";
 
 const RESPONSE_FOR_STOCK: IIngredientStockResponse = {
     averagePrice: {
@@ -91,6 +97,19 @@ export default function Stock() {
     const stockFilterArgs = useFactoryIngredientStockFilter();
     const analysisFilterArgs = useFactoryIngredientAnalysisFilter();
 
+    const {data, refetch} = useQuery({
+        queryKey: [
+            "ingredientStock",
+            stockFilterArgs.unitType,
+            stockFilterArgs.dateFieldChanged
+        ],
+        queryFn: () => RESPONSE_FOR_STOCK
+            // IngredientApi.GET_INGREDIENT_STOCK(
+            //     getParamDate(stockFilterArgs.date),
+            //     stockFilterArgs.unitType
+            // ),
+    });
+
     return (
         <>
             <KumohHead title="자재 재고 관리 | 금오거래센터" />
@@ -104,16 +123,21 @@ export default function Stock() {
                 {tab === "재고 현황" && (
                     <>
                         <FactoryIngredientStockFilter {...stockFilterArgs}/>
-                        <StockInfo 
-                            purchasePrice={RESPONSE_FOR_STOCK.averagePrice.purchase}
-                            sellPrice={RESPONSE_FOR_STOCK.averagePrice.sell}
-                            count={RESPONSE_FOR_STOCK.totalStock.count}
-                            weight={RESPONSE_FOR_STOCK.totalStock.weight}
-                        />
-                        <IngredientStockList 
-                            selectedDate={stockFilterArgs.date}
-                            ingredientList={RESPONSE_FOR_STOCK.ingredientList}
-                            />
+                        {data && (
+                            <>
+                                <StockInfo 
+                                    purchasePrice={data.averagePrice.purchase}
+                                    sellPrice={data.averagePrice.sell}
+                                    count={data.totalStock.count}
+                                    weight={data.totalStock.weight}
+                                />
+                                <IngredientStockList 
+                                    selectedDate={stockFilterArgs.date}
+                                    ingredientList={data.ingredientList}
+                                    refetch={refetch}
+                                />
+                            </>
+                        )}
                     </>
                 )}
                 {tab === "재고 분석" && (
@@ -132,4 +156,33 @@ export default function Stock() {
             </BodyWrapper>
         </>
     )
+}
+
+export const getSeverSideProps: GetServerSideProps = async (context) => {
+    const queryClient = new QueryClient();
+    const { cookies } = context.req;
+
+    setSsrAxiosHeader(cookies);
+    await queryClient.prefetchQuery({
+        queryKey: ["ingredientStock", "count", false],
+        queryFn: () => IngredientApi.GET_INGREDIENT_STOCK(getNowDate(), "count")
+    });
+
+    const queryState = queryClient.getQueryState(["ingredientStock", "count"]);
+    if (queryState?.status === "error") {
+        return {
+            redirect: {
+              destination: `${AppPages.LOGIN}?redirect=${encodeURIComponent(
+                context.resolvedUrl,
+              )}`,
+              permanent: false,
+            },
+          };
+    }
+
+    return {
+        props: {
+          dehydratedState: dehydrate(queryClient),
+        },
+      };
 }

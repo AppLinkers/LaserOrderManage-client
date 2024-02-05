@@ -45,6 +45,32 @@ export type IngredientName = {
     thickness: number;
 }
 
+export type IIngredientRequest = {
+    texture: string;
+    thickness: number;
+    width: number;
+    height: number;
+    weight: number;
+    price: {
+        purchase: number;
+        sell: number;
+    };
+    optimalStock: number | null;
+}
+
+export type IIngredientStockRequest = {
+    stock: {
+        incoming: number;
+        production: number;
+        currentDay: number;
+    }
+    price: {
+        purchase: number;
+        sell: number;
+    }
+    optimalStock: number | null;
+}
+
 export type IIngredientNameListResponse = IBaseListSimpleResponse<IngredientName>;
 
 export type IIngredientGraphItemListResponse = {

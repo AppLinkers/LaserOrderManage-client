@@ -5,15 +5,15 @@ import * as S from "./IngredientStockList.styles"
 import EditIcon from "@/src/components/commons/icons/EditIcon.index";
 import Spacer from "@/src/components/commons/spacer/Spacer.index";
 import { Ingredient } from "@/src/lib/apis/ingredient/Ingredient.types";
-import DeleteIngredientModel from "@/src/components/commons/modal/ingredient/DeleteIngredientModal.index";
 import DeleteIngredientModal from "@/src/components/commons/modal/ingredient/DeleteIngredientModal.index";
 
 interface IIngredientStockListProps {
     selectedDate: string;
     ingredientList: Ingredient[];
+    refetch: () => void;
 }
 
-export default function IngredientStockList ({selectedDate, ingredientList}: IIngredientStockListProps) {
+export default function IngredientStockList ({selectedDate, ingredientList, refetch}: IIngredientStockListProps) {
     const [showEditBar, setShowEditBar] = useState(false);
     const [showCreateBar, setShowCreateBar] = useState(false);
     const [focusedItem, setFocusedItem] = useState<Ingredient | null>(null);
@@ -46,6 +46,16 @@ export default function IngredientStockList ({selectedDate, ingredientList}: IIn
         setShowCreateBar(true);
     }
 
+    const dateFormat = (date: string) => {
+        const parts = date.split(". ");
+
+        const year = '20' + parts[0].trim();
+        const month = parseInt(parts[1], 10);
+        const day = parseInt(parts[2], 10);
+
+        return `${year}년 ${month}월 ${day}일`;
+    }
+
     return (
         <>
             <S.Wrapper> 
@@ -68,7 +78,7 @@ export default function IngredientStockList ({selectedDate, ingredientList}: IIn
                 <th rowSpan={2}>재 질</th>
                 <th rowSpan={2}>두께</th>
                 <th rowSpan={2}>크기</th>
-                <th colSpan={4}>{`${selectedDate} 자재 재고 현황`}</th>
+                <th colSpan={4}>{`${dateFormat(selectedDate)} 자재 재고 현황`}</th>
                 <th rowSpan={2}>적정 재고</th>
               </tr>
               <tr>
@@ -84,9 +94,9 @@ export default function IngredientStockList ({selectedDate, ingredientList}: IIn
           </S.Table>
         </div>
             </S.Wrapper>
-            <IngredientEditBottombar show={showEditBar} ingredient={focusedItem!} onDelete={() => {setShowDeleteIngredientModal(true)}} onSubmit={() => {}} onClose={() => setShowEditBar(false)}/>
-            <IngredientCreateBottombar show={showCreateBar} onSubmit={() => {}} onClose={() => setShowCreateBar(false)}/>
-            <DeleteIngredientModal ingredient={focusedItem!} isOpen={showDeleteIngredientModal} onClose={() => setShowDeleteIngredientModal(false)}/>
+            <IngredientEditBottombar show={showEditBar} ingredient={focusedItem!} onClose={() => setShowEditBar(false)} refetch={refetch}/>
+            <IngredientCreateBottombar show={showCreateBar} onClose={() => setShowCreateBar(false)} refetch={refetch}/>
+            <DeleteIngredientModal ingredient={focusedItem} isOpen={showDeleteIngredientModal} onClose={() => setShowDeleteIngredientModal(false)}/>
         </>
        
     )

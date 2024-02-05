@@ -1,4 +1,4 @@
-import { Ingredient } from "@/src/lib/apis/ingredient/Ingredient.types";
+import { IIngredientStockRequest, Ingredient } from "@/src/lib/apis/ingredient/Ingredient.types";
 import * as S from "./IngredientBottombar.styles"
 import { IIngredientBottombarProps } from "./IngredientBottombar.types"
 import TrashIcon from "@/src/components/commons/icons/TrashIcon.index";
@@ -7,15 +7,17 @@ import { useInputWithRegex } from "@/src/lib/hooks/useInput";
 import { numberRegex } from "@/src/lib/constants/regex";
 import { ChangeEvent, useEffect, useState, MouseEvent, useRef } from "react";
 import { getNumberFromSplitNumber, getNumberSplit } from "@/src/lib/utils/utils";
+import { useMutation } from "@tanstack/react-query";
+import { IngredientApi } from "@/src/lib/apis/ingredient/IngredientApi";
+import { useToastify } from "@/src/lib/hooks/useToastify";
 
 interface IIngredientEditBottombarProps extends IIngredientBottombarProps {
-    ingredient: Ingredient | null;
-    onDelete: () => void;
-    onSubmit: () => void;
+    ingredient: Ingredient;
     onClose: () => void;
+    refetch: () => void;
 }
 
-export default function IngredientEditBottombar({show, ingredient, onDelete, onSubmit, onClose}: IIngredientEditBottombarProps) {
+export default function IngredientEditBottombar({show, ingredient, onClose, refetch}: IIngredientEditBottombarProps) {
     const [previousDayStock, setPreviousDayStock] = useState("");
     const [incomingStock, onChangeIncomingStock, setIncomingStock] = useInputWithRegex(numberRegex, "");
     const [incomingStockFocus, setIncomingStockFocus] = useState(false);
@@ -28,6 +30,13 @@ export default function IngredientEditBottombar({show, ingredient, onDelete, onS
     const [sellPriceFocus, setSellPriceFocus] = useState(false);
     const [optimalStock, onChangeOptimalStock, setOptimalStock] = useInputWithRegex(numberRegex, "");
     const [optimalStockFocus, setOptimalStockFocus] = useState(false);
+    const submitAvailable = 
+        incomingStock !== "" &&
+        productionStock !== "" &&
+        currentDayStock !== "" &&
+        purchasePrice !== "" &&
+        sellPrice !== "";
+    const { setToast } = useToastify();
 
     useEffect(() => {
         setPreviousDayStock(String(ingredient?.stock.previousDay ?? 0));
@@ -76,6 +85,49 @@ export default function IngredientEditBottombar({show, ingredient, onDelete, onS
         onChangeOptimalStock(event);
     }
 
+    const { mutate: editMutate } = useMutation({
+        mutationFn: IngredientApi.EDIT_INGREDIENT_STOCK,
+        onSuccess: () => {
+            refetch();
+            onClose();
+            setToast({comment: "자재 재고를 수정했어요"});
+        },
+        onError: () => {
+            setToast({comment: "자재 재고 수정에 실패했어요"});
+        },
+    });
+
+    const onSubmit = () => {
+        const payload: IIngredientStockRequest = {
+            stock: {
+                incoming: Number(incomingStock),
+                production: Number(productionStock),
+                currentDay: Number(currentDayStock),
+            },
+            price: {
+                purchase: Number(purchasePrice),
+                sell: Number(sellPrice)
+            },
+            optimalStock: Number(optimalStock)
+        };
+        editMutate({ id: ingredient.id, payload: payload});
+    }
+
+    const { mutate: deleteMutate } = useMutation({
+        mutationFn: IngredientApi.DELETE_INGREDIENT,
+        onSuccess: () => {
+            refetch();
+            setToast({ comment: "자재를 삭제했어요" });
+        },
+        onError: () => {
+            setToast({ comment: "자재 삭제에 실패했어요" });
+        }
+    })
+
+    const onDelete = () => {
+        deleteMutate(ingredient.id);
+    }
+
     return (
         <S.Wrapper show={show}> 
             <S.Header className="flex-row-between">
@@ -111,7 +163,7 @@ export default function IngredientEditBottombar({show, ingredient, onDelete, onS
                                         >
                                             <S.EditInput
                                                 placeholder="수량 입력"
-                                                value={getNumberSplit(incomingStock)}
+                                                value={incomingStock === "" ? "" : getNumberSplit(incomingStock)}
                                                 maxLength={8}
                                                 onChange={customOnChangeIncomingStock}
                                                 onFocus={() => setIncomingStockFocus(true)}
@@ -141,7 +193,7 @@ export default function IngredientEditBottombar({show, ingredient, onDelete, onS
                                         >
                                             <S.EditInput
                                                 placeholder="수량 입력"
-                                                value={getNumberSplit(currentDayStock)}
+                                                value={currentDayStock === "" ? "" : getNumberSplit(currentDayStock)}
                                                 maxLength={8}
                                                 onChange={customOnChangeCurrentDayStock}
                                                 onFocus={() => setCurrentDayStockFocus(true)}
@@ -166,7 +218,7 @@ export default function IngredientEditBottombar({show, ingredient, onDelete, onS
                                             >
                                                 <S.EditInput
                                                     placeholder="금액 입력"
-                                                    value={getNumberSplit(purchasePrice)}
+                                                    value={purchasePrice === "" ? "" : getNumberSplit(purchasePrice)}
                                                     maxLength={8}
                                                     onChange={customOnChangePurchasePrice}
                                                     onFocus={() => setPurchasePriceFocus(true)}
@@ -185,7 +237,7 @@ export default function IngredientEditBottombar({show, ingredient, onDelete, onS
                                             >
                                                 <S.EditInput
                                                     placeholder="금액 입력"
-                                                    value={getNumberSplit(sellPrice)}
+                                                    value={sellPrice === "" ? "" : getNumberSplit(sellPrice)}
                                                     maxLength={8}
                                                     onChange={customOnChangeSellPrice}
                                                     onFocus={() => setSellPriceFocus(true)}
@@ -209,7 +261,7 @@ export default function IngredientEditBottombar({show, ingredient, onDelete, onS
                                             >
                                                 <S.EditInput
                                                     placeholder="수량 입력"
-                                                    value={getNumberSplit(optimalStock)}
+                                                    value={optimalStock === "" ? "" : getNumberSplit(optimalStock)}
                                                     maxLength={8}
                                                     onChange={customOnChangeOptimalStock}
                                                     onFocus={() => setOptimalStockFocus(true)}
@@ -232,6 +284,7 @@ export default function IngredientEditBottombar({show, ingredient, onDelete, onS
                             <S.SubmitButton
                                 className="bold14"
                                 onClick={onSubmit}
+                                disabled={!submitAvailable}
                             >
                             저장하기
                             </S.SubmitButton>
