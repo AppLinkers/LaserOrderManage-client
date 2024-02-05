@@ -154,17 +154,20 @@ export const useFactoryNewOrderFilter = () => {
 export const useFactoryIngredientStockFilter = () => {
   const formattedDate = () => {
     const date = new Date();
-    const year = date.getFullYear();
+    const year = date.getFullYear().toString().substr(-2);
     const month = `${date.getMonth() + 1}`.padStart(2, '0');
     const day = `${date.getDate()}`.padStart(2, '0');
-    return `${year}-${month}-${day}`;
+    return `${year}. ${month}. ${day}`;
   }
+
   const [date, setDate] = useState<string>(formattedDate());
+  const [dateFieldChanged, setDateFieldChanged] = useState(false);
   const [unitType, setUnitType] = useState("count");
 
   const onDate = (selectedDate: DateValue) => {
     const date = moment(selectedDate?.toString()).format("YY. MM. DD");
     setDate(date);
+    setDateFieldChanged(!dateFieldChanged);
   };
 
   const onUnitType = (selectedUnit: string) => {
@@ -173,6 +176,7 @@ export const useFactoryIngredientStockFilter = () => {
 
   return {
     date,
+    dateFieldChanged,
     unitType,
     onDate,
     onUnitType
