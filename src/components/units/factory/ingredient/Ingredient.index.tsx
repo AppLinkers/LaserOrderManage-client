@@ -7,9 +7,10 @@ import { useStockTab } from "@/src/lib/hooks/useTab";
 import { useFactoryIngredientAnalysisFilter, useFactoryIngredientStockFilter } from "@/src/lib/hooks/useFilter";
 import FactoryIngredientAnalysisFilter from "@/src/components/commons/filters/factory/FactoryIngredientAnalysisFilter.index";
 import IngredientStockList from "./list/IngredientStockList.index";
-import { IIngredientStockResponse } from "@/src/lib/apis/ingredient/Ingredient.types";
+import { IIngredientGraphItemListResponse, IIngredientStockResponse } from "@/src/lib/apis/ingredient/Ingredient.types";
+import IngredientAnalysisGraph from "./graph/IngredientAnalysisGraph.index";
 
-const RESPONSE: IIngredientStockResponse = {
+const RESPONSE_FOR_STOCK: IIngredientStockResponse = {
     averagePrice: {
         purchase: 1000,
         sell: 1000
@@ -58,6 +59,33 @@ const RESPONSE: IIngredientStockResponse = {
     ]
 }
 
+const RESPONSE_FOR_GRAPH: IIngredientGraphItemListResponse = {
+    timeUnit : "month",
+    startDate : "2024-01",
+    endDate : "2024-12",
+    itemList : {
+        contents : [
+            {
+                item : "입고",
+                data : [30, 50, 40, 20, 60, 30, 10, 80, 90, 30, 90, 100]
+            },
+            {
+                item : "생산",
+                data : [70, 30, 10, 30, 70, 20, 30, 60, 40, 80, 20, 30]
+            },
+            {
+                item : "재고",
+                data : [100, 20, 40, 30, 60, 30, 40, 70, 80, 100, 30, 20]
+            },
+            {
+                item : "적정 재고",
+                data : [20, 50, 20, 70, 40, 50, 20, 70, 10, 80, 100, 40]
+            }
+        ],
+        totalElements : 4
+    }
+}
+
 export default function Stock() {
     const [tab, onTabClick] = useStockTab("재고 현황");
     const stockFilterArgs = useFactoryIngredientStockFilter();
@@ -77,20 +105,28 @@ export default function Stock() {
                     <>
                         <FactoryIngredientStockFilter {...stockFilterArgs}/>
                         <StockInfo 
-                            purchasePrice={RESPONSE.averagePrice.purchase}
-                            sellPrice={RESPONSE.averagePrice.sell}
-                            count={RESPONSE.totalStock.count}
-                            weight={RESPONSE.totalStock.weight}
+                            purchasePrice={RESPONSE_FOR_STOCK.averagePrice.purchase}
+                            sellPrice={RESPONSE_FOR_STOCK.averagePrice.sell}
+                            count={RESPONSE_FOR_STOCK.totalStock.count}
+                            weight={RESPONSE_FOR_STOCK.totalStock.weight}
                         />
                         <IngredientStockList 
                             selectedDate={stockFilterArgs.date}
-                            ingredientList={RESPONSE.ingredientList}
+                            ingredientList={RESPONSE_FOR_STOCK.ingredientList}
                             />
                     </>
                 )}
                 {tab === "재고 분석" && (
                     <>
                         <FactoryIngredientAnalysisFilter {...analysisFilterArgs} />
+                        {RESPONSE_FOR_GRAPH && (
+                            <IngredientAnalysisGraph 
+                                timeUnit={RESPONSE_FOR_GRAPH.timeUnit}
+                                startDate={RESPONSE_FOR_GRAPH.startDate}
+                                endDate={RESPONSE_FOR_GRAPH.endDate}
+                                graphItemList={RESPONSE_FOR_GRAPH.itemList}
+                            ></IngredientAnalysisGraph>
+                        )}
                     </>
                 )}
             </BodyWrapper>

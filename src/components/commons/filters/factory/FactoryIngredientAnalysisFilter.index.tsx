@@ -39,7 +39,7 @@ const INGREDIENT_DATA: IIngredientNameListResponse = {
     totalElements: 3,
 }
 
-const yearRange = Array.from({ length: new Date("2030-01-01").getFullYear() - 2024 + 1 }, (_, i) => 2024 + i);
+const yearRange = Array.from({ length: new Date().getFullYear() - 2024 + 1 }, (_, i) => 2024 + i);
 const monthRange = Array.from({ length: 12}, (_, i) => 1 + i);
 
 export default function FactoryIngredientAnalysisFilter(props: IFactoryIngredientAnalysisFilterProps) {
@@ -94,7 +94,10 @@ export default function FactoryIngredientAnalysisFilter(props: IFactoryIngredien
                     </S.Filter>
                     ))}
                     <SelectWrapper>
-                        <Select width={100} marginLeft={16} onChange={(event) => props.onStartYear(event.target.value)} disabled={props.dateType !== "year" && props.dateType !== "month"}>
+                        <Select width={100} marginLeft={16} value={props.startYear} onChange={(event) => props.onStartYear(event.target.value)} disabled={props.dateType !== "year" && props.dateType !== "month"}>
+                            <Option value={""} disabled hidden>
+                                년
+                            </Option>
                             {yearRange.map((el) => (
                                 <Option key={el} value={el}>
                                     {`${el} 년`}
@@ -104,7 +107,10 @@ export default function FactoryIngredientAnalysisFilter(props: IFactoryIngredien
                     </SelectWrapper>
                     {props.dateType === "month" && (
                         <SelectWrapper>
-                            <Select width={60} marginLeft={4} onChange={(event) => props.onStartMonth(event.target.value)}>
+                            <Select width={60} marginLeft={4} value={props.startMonth} onChange={(event) => props.onStartMonth(event.target.value)}>
+                                <Option value={""} disabled hidden>
+                                    월
+                                </Option>
                                 {monthRange.map((el) => (
                                     <Option key={el} value={el}>
                                         {`${el} 월`}
@@ -115,7 +121,10 @@ export default function FactoryIngredientAnalysisFilter(props: IFactoryIngredien
                     )}
                     <DateInputDivider dateType={props.dateType} className="medium20">-</DateInputDivider>
                     <SelectWrapper>
-                        <Select width={100} marginLeft={0} onChange={(event) => props.onEndYear(event.target.value)} disabled={props.dateType !== "year" && props.dateType !== "month"}>
+                        <Select width={100} marginLeft={0} value={props.endYear} onChange={(event) => props.onEndYear(event.target.value)} disabled={props.dateType !== "year" && props.dateType !== "month"}>
+                            <Option value={""} disabled hidden>
+                                년
+                            </Option>
                             {yearRange.map((el) => (
                                 <Option key={el} value={el}>
                                     {`${el} 년`}
@@ -125,7 +134,10 @@ export default function FactoryIngredientAnalysisFilter(props: IFactoryIngredien
                     </SelectWrapper>
                     {props.dateType === "month" && (
                         <SelectWrapper>
-                            <Select width={60} marginLeft={4} onChange={(event) => props.onEndMonth(event.target.value)}>
+                            <Select width={60} marginLeft={4} value={props.endMonth} onChange={(event) => props.onEndMonth(event.target.value)}>
+                                <Option value={""} disabled hidden>
+                                    월
+                                </Option>
                                 {monthRange.map((el) => (
                                     <Option key={el} value={el}>
                                         {`${el} 월`}
