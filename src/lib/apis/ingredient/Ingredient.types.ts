@@ -39,12 +39,6 @@ export type Price = {
     sell: number;
 }
 
-export type IngredientName = {
-    id: number;
-    texture: string;
-    thickness: number;
-}
-
 export type IIngredientRequest = {
     texture: string;
     thickness: number;
@@ -69,6 +63,12 @@ export type IIngredientStockRequest = {
         sell: number;
     }
     optimalStock: number | null;
+}
+
+export type IngredientName = {
+    id: number;
+    texture: string;
+    thickness: number;
 }
 
 export type IIngredientNameListResponse = IBaseListSimpleResponse<IngredientName>;

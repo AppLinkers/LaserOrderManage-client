@@ -1,5 +1,5 @@
 import { axiosPrivate } from "../axios";
-import { IIngredientRequest, IIngredientStockRequest, IIngredientStockResponse } from "./Ingredient.types";
+import { IIngredientNameListResponse, IIngredientRequest, IIngredientStockRequest, IIngredientStockResponse } from "./Ingredient.types";
 
 export const IngredientApi = {
     GET_INGREDIENT_STOCK: async (
@@ -38,6 +38,10 @@ export const IngredientApi = {
         const response = await axiosPrivate.delete(
             `/factory/ingredient/${id}`,
         );
+        return response.data;
+    },
+    GET_INGREDIENT_LIST: async (): Promise<IIngredientNameListResponse> => {
+        const response = await axiosPrivate.get("/factory/ingredient");
         return response.data;
     }
 

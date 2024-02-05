@@ -3,7 +3,8 @@ import * as S from "../OrderFilter.styles";
 import { ANALYSIS_DATA_TYPE, ANALYSIS_DATE_TYPE, ANALYSIS_ITEM_UNIT_TYPE, ANALYSIS_PRICE_ITEM_TYPE, ANALYSIS_STOCK_ITEM_TYPE, INGREDIENT_UNIT_TYPE } from "./FactoryFilter.queries";
 import Spacer from "../../spacer/Spacer.index";
 import { ChangeEvent } from "react";
-import { IIngredientNameListResponse } from "@/src/lib/apis/ingredient/Ingredient.types";
+import { useQuery } from "@tanstack/react-query";
+import { IngredientApi } from "@/src/lib/apis/ingredient/IngredientApi";
 
 interface IFactoryIngredientAnalysisFilterProps {
     dataType: string;
@@ -30,19 +31,15 @@ interface IFactoryIngredientAnalysisFilterProps {
     onPriceItem: (type: string) => void;
 }
 
-const INGREDIENT_DATA: IIngredientNameListResponse = {
-    contents: [
-        {id: 0, texture: "t1", thickness: 1.5},
-        {id: 1, texture: "t2", thickness: 2.5},
-        {id: 2, texture: "t3", thickness: 3.5},
-    ],
-    totalElements: 3,
-}
-
 const yearRange = Array.from({ length: new Date().getFullYear() - 2024 + 1 }, (_, i) => 2024 + i);
 const monthRange = Array.from({ length: 12}, (_, i) => 1 + i);
 
 export default function FactoryIngredientAnalysisFilter(props: IFactoryIngredientAnalysisFilterProps) {
+    const { data, refetch } = useQuery({
+        queryKey: ["getIngredient"],
+        queryFn: () => IngredientApi.GET_INGREDIENT_LIST(),
+    });
+
     return (
         <Wrapper>
             <FilterWrapper>
@@ -56,7 +53,12 @@ export default function FactoryIngredientAnalysisFilter(props: IFactoryIngredien
                         className="medium16"
                         key={el.type}
                         isSelect={props.dataType === el.key}
-                        onClick={() => props.onDataType(el.key)}
+                        onClick={() => {
+                            props.onDataType(el.key)
+                            if (el.key === "ingredient") {
+                                refetch();
+                            }
+                        }}
                     >
                         {el.type}
                     </S.Filter>
@@ -72,7 +74,7 @@ export default function FactoryIngredientAnalysisFilter(props: IFactoryIngredien
                             <Option value={""} disabled hidden>
                                 자재를 선택해주세요
                             </Option>
-                            {INGREDIENT_DATA.contents.map((el) => (
+                            {data?.contents.map((el) => (
                                 <Option key={el.id} value={el.id}>
                                 {`${el.texture} - ${el.thickness} T`}
                             </Option>
