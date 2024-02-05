@@ -9,14 +9,10 @@ interface IFactoryIngredientAnalysisFilterProps {
     dataType: string;
     ingredientId: number | string;
     dateType: string;
-    startYearRange: number[];
-    startMonthRange: number[];
-    endYearRange: number[];
-    endMonthRange: number[];
-    startYear: number;
-    startMonth: number;
-    endYear: number;
-    endMonth: number;
+    startYear: string;
+    startMonth: string;
+    endYear: string;
+    endMonth: string;
     unitType: string;
     itemType: string;
     stockItemList: string[];
@@ -24,10 +20,10 @@ interface IFactoryIngredientAnalysisFilterProps {
     onDataType: (type: string) => void;
     onIngredient: (event: ChangeEvent<HTMLSelectElement>) => void;
     onDateType: (type: string) => void;
-    onStartYear: () => void;
-    onStartMonth: () => void;
-    onEndYear: () => void;
-    onEndMonth: () => void;
+    onStartYear: (type: string) => void;
+    onStartMonth: (type: string) => void;
+    onEndYear: (type: string) => void;
+    onEndMonth: (type: string) => void;
     onUnitType: (type: string) => void;
     onItemType: (type: string) => void;
     onStockItem: (type: string) => void;
@@ -42,6 +38,9 @@ const INGREDIENT_DATA: IIngredientNameListResponse = {
     ],
     totalElements: 3,
 }
+
+const yearRange = Array.from({ length: new Date().getFullYear() - 2024 + 1 }, (_, i) => 2024 + i);
+const monthRange = Array.from({ length: 12}, (_, i) => 1 + i);
 
 export default function FactoryIngredientAnalysisFilter(props: IFactoryIngredientAnalysisFilterProps) {
     return (
@@ -95,8 +94,11 @@ export default function FactoryIngredientAnalysisFilter(props: IFactoryIngredien
                     </S.Filter>
                     ))}
                     <SelectWrapper>
-                        <Select width={100} marginLeft={16}>
-                            {props.startYearRange.map((el) => (
+                        <Select width={100} marginLeft={16} value={props.startYear} onChange={(event) => props.onStartYear(event.target.value)} disabled={props.dateType !== "year" && props.dateType !== "month"}>
+                            <Option value={""} disabled hidden>
+                                년
+                            </Option>
+                            {yearRange.map((el) => (
                                 <Option key={el} value={el}>
                                     {`${el} 년`}
                                 </Option>
@@ -105,8 +107,11 @@ export default function FactoryIngredientAnalysisFilter(props: IFactoryIngredien
                     </SelectWrapper>
                     {props.dateType === "month" && (
                         <SelectWrapper>
-                            <Select width={60} marginLeft={4}>
-                                {props.startMonthRange.map((el) => (
+                            <Select width={60} marginLeft={4} value={props.startMonth} onChange={(event) => props.onStartMonth(event.target.value)}>
+                                <Option value={""} disabled hidden>
+                                    월
+                                </Option>
+                                {monthRange.map((el) => (
                                     <Option key={el} value={el}>
                                         {`${el} 월`}
                                     </Option>
@@ -114,10 +119,13 @@ export default function FactoryIngredientAnalysisFilter(props: IFactoryIngredien
                             </Select>
                         </SelectWrapper>
                     )}
-                    <S.DateInputDivier className="medium20">-</S.DateInputDivier>
+                    <DateInputDivider dateType={props.dateType} className="medium20">-</DateInputDivider>
                     <SelectWrapper>
-                        <Select width={100} marginLeft={0}>
-                            {props.endYearRange.map((el) => (
+                        <Select width={100} marginLeft={0} value={props.endYear} onChange={(event) => props.onEndYear(event.target.value)} disabled={props.dateType !== "year" && props.dateType !== "month"}>
+                            <Option value={""} disabled hidden>
+                                년
+                            </Option>
+                            {yearRange.map((el) => (
                                 <Option key={el} value={el}>
                                     {`${el} 년`}
                                 </Option>
@@ -126,8 +134,11 @@ export default function FactoryIngredientAnalysisFilter(props: IFactoryIngredien
                     </SelectWrapper>
                     {props.dateType === "month" && (
                         <SelectWrapper>
-                            <Select width={60} marginLeft={4}>
-                                {props.endMonthRange.map((el) => (
+                            <Select width={60} marginLeft={4} value={props.endMonth} onChange={(event) => props.onEndMonth(event.target.value)}>
+                                <Option value={""} disabled hidden>
+                                    월
+                                </Option>
+                                {monthRange.map((el) => (
                                     <Option key={el} value={el}>
                                         {`${el} 월`}
                                     </Option>
@@ -221,8 +232,19 @@ const SearchButton = styled.button`
     border-bottom-left-radius: var(--border-radius);
     border-bottom-right-radius: var(--border-radius);
 `
-export const SelectWrapper = styled.div`
+const SelectWrapper = styled.div`
   position: relative;
+`;
+
+interface IDateTypeProps {
+    dateType: string
+}
+
+const DateInputDivider = styled.p<IDateTypeProps>`
+color: ${(props: IDateTypeProps) =>
+    (props.dateType === "month" || props.dateType === "year") ? "var(--color-normarGray)" : "var(--color-mediumGray)"};
+margin-left: 6px;
+margin-right: 6px;
 `;
 
 interface ISelectProps {
@@ -230,7 +252,7 @@ interface ISelectProps {
     marginLeft: number;
 }
 
-export const Select = styled.select<ISelectProps>`
+const Select = styled.select<ISelectProps>`
   width: ${(props) => `${props.width}px`};
   height: 32px;
   border: 1px solid var(--color-mediumGray);

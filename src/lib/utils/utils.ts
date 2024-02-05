@@ -38,6 +38,39 @@ export const getDateTime = (value: any) => {
   return `${dayDiff}일 전`;
 };
 
+export const getMonthList = (startDate: string, endDate: string) => {
+  const startYear = parseInt(startDate.split("-")[0]);
+  const startMonth = parseInt(startDate.split("-")[1]);
+  const endYear = parseInt(endDate.split("-")[0]);
+  const endMonth = parseInt(endDate.split("-")[1]);
+
+  const monthList = [];
+
+  for (let year = startYear; year <= endYear; year++) {
+    let monthStart = year === startYear ? startMonth : 1;
+    let monthEnd = year === endYear ? endMonth : 12;
+
+    for (let month = monthStart; month <= monthEnd; month++) {
+      monthList.push(`${year}년 ${month}월`);
+    }
+  }
+
+  return monthList;
+}
+
+export const getYearList = (startDate: string, endDate: string) => {
+  const startYear = parseInt(startDate.split("-")[0]);
+  const endYear = parseInt(endDate.split("-")[0]);
+
+  const yearList = [];
+
+  for (let year = startYear; year <= endYear; year++) {
+    yearList.push(`${year}년`);
+  }
+
+  return yearList;
+}
+
 export const getParamDate = (value: string): string => {
   if (value === "") {
     return "";

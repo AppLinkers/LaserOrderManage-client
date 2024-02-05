@@ -46,3 +46,15 @@ export type IngredientName = {
 }
 
 export type IIngredientNameListResponse = IBaseListSimpleResponse<IngredientName>;
+
+export type IIngredientGraphItemListResponse = {
+    timeUnit: string;
+    startDate: string;
+    endDate: string;
+    itemList: IBaseListSimpleResponse<Item>;
+}
+
+export type Item = {
+    item: string;
+    data: number[];
+}
