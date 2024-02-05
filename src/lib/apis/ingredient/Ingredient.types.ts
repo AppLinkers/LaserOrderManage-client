@@ -51,8 +51,24 @@ export type IIngredientRequest = {
     width: number;
     height: number;
     weight: number;
-    price: Price;
-    optimalStock: number;
+    price: {
+        purchase: number;
+        sell: number;
+    };
+    optimalStock: number | null;
+}
+
+export type IIngredientStockRequest = {
+    stock: {
+        incoming: number;
+        production: number;
+        currentDay: number;
+    }
+    price: {
+        purchase: number;
+        sell: number;
+    }
+    optimalStock: number | null;
 }
 
 export type IIngredientNameListResponse = IBaseListSimpleResponse<IngredientName>;

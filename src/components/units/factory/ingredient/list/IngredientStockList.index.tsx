@@ -94,9 +94,9 @@ export default function IngredientStockList ({selectedDate, ingredientList, refe
           </S.Table>
         </div>
             </S.Wrapper>
-            <IngredientEditBottombar show={showEditBar} ingredient={focusedItem!} onDelete={() => {setShowDeleteIngredientModal(true)}} onSubmit={() => {}} onClose={() => setShowEditBar(false)}/>
+            <IngredientEditBottombar show={showEditBar} ingredient={focusedItem!} onClose={() => setShowEditBar(false)} refetch={refetch}/>
             <IngredientCreateBottombar show={showCreateBar} onClose={() => setShowCreateBar(false)} refetch={refetch}/>
-            <DeleteIngredientModal ingredient={focusedItem!} isOpen={showDeleteIngredientModal} onClose={() => setShowDeleteIngredientModal(false)}/>
+            <DeleteIngredientModal ingredient={focusedItem} isOpen={showDeleteIngredientModal} onClose={() => setShowDeleteIngredientModal(false)}/>
         </>
        
     )

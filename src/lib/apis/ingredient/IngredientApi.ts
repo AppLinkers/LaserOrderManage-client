@@ -1,5 +1,5 @@
 import { axiosPrivate } from "../axios";
-import { IIngredientRequest, IIngredientStockResponse } from "./Ingredient.types";
+import { IIngredientRequest, IIngredientStockRequest, IIngredientStockResponse } from "./Ingredient.types";
 
 export const IngredientApi = {
     GET_INGREDIENT_STOCK: async (
@@ -18,6 +18,19 @@ export const IngredientApi = {
         const response = await axiosPrivate.post(
             "/factory/ingredient",
             payload
+        );
+        return response.data;
+    },
+    EDIT_INGREDIENT_STOCK: async ({
+        id,
+        payload,
+    } : {
+        id: number;
+        payload: IIngredientStockRequest;
+    }): Promise<null> => {
+        const response = await axiosPrivate.patch(
+            `/factory/ingredient/${id}`,
+            payload,
         );
         return response.data;
     }
