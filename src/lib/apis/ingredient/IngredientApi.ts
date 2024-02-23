@@ -1,13 +1,12 @@
 import { axiosPrivate } from "../axios";
-import { IIngredientGraphItemListResponse, IIngredientNameListResponse, IIngredientRequest, IIngredientStockRequest, IIngredientStockResponse } from "./Ingredient.types";
+import { IIngredientGraphItemListResponse, IIngredientNameListResponse, IIngredientRequest, IIngredientStatusRequest, IIngredientStatusResponse } from "./Ingredient.types";
 
 export const IngredientApi = {
-    GET_INGREDIENT_STOCK: async (
-        date: string,
-        unit: string
-    ): Promise<IIngredientStockResponse> => {
+    GET_INGREDIENT_STATUS: async (
+        date: string
+    ): Promise<IIngredientStatusResponse> => {
         const response = await axiosPrivate.get(
-            `/factory/ingredient/stock?date=${date}&unit=${unit}`,
+            `/factory/ingredient/status?date=${date}`,
         );
         return response.data;
     },
@@ -20,12 +19,12 @@ export const IngredientApi = {
         );
         return response.data;
     },
-    EDIT_INGREDIENT_STOCK: async ({
+    EDIT_INGREDIENT_STATUS: async ({
         id,
         payload,
     } : {
         id: number;
-        payload: IIngredientStockRequest;
+        payload: IIngredientStatusRequest;
     }): Promise<null> => {
         const response = await axiosPrivate.patch(
             `/factory/ingredient/${id}`,

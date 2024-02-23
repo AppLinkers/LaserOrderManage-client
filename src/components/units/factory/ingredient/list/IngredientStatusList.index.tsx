@@ -1,23 +1,34 @@
 import { useState } from "react";
 import IngredientEditBottombar from "../bottombar/IngredientEditBottombar.index";
 import IngredientCreateBottombar from "../bottombar/IngredientCreateBottombar.index";
-import * as S from "./IngredientStockList.styles"
+import * as S from "./IngredientStatusList.styles"
 import EditIcon from "@/src/components/commons/icons/EditIcon.index";
 import Spacer from "@/src/components/commons/spacer/Spacer.index";
 import { Ingredient } from "@/src/lib/apis/ingredient/Ingredient.types";
 import DeleteIngredientModal from "@/src/components/commons/modal/ingredient/DeleteIngredientModal.index";
+import { INGREDIENT_UNIT_TYPE } from "@/src/components/commons/filters/factory/FactoryFilter.queries";
+import { getNowDate, getNumberSplitFromNumber } from "@/src/lib/utils/utils";
 
-interface IIngredientStockListProps {
+interface IIngredientStatusListProps {
     selectedDate: string;
+    selectedUnit: string;
     ingredientList: Ingredient[];
     refetch: () => void;
 }
 
-export default function IngredientStockList ({selectedDate, ingredientList, refetch}: IIngredientStockListProps) {
+export default function IngredientStatusList ({selectedDate, selectedUnit, ingredientList, refetch}: IIngredientStatusListProps) {
+    const [date, setDate] = useState(getNowDate());
     const [showEditBar, setShowEditBar] = useState(false);
     const [showCreateBar, setShowCreateBar] = useState(false);
     const [focusedItem, setFocusedItem] = useState<Ingredient | null>(null);
     const [showDeleteIngredientModal, setShowDeleteIngredientModal] = useState(false);
+
+
+    if (selectedDate !== date) {
+        setDate(selectedDate);
+        setShowEditBar(false);
+        setShowCreateBar(false);
+    }
 
     const showEditBarWithData = (ingredient: Ingredient) => {
         if (showCreateBar) {
@@ -32,6 +43,7 @@ export default function IngredientStockList ({selectedDate, ingredientList, refe
 
         if (showEditBar && focusedItem === ingredient) {
             setShowEditBar(false);
+            return;
         }
 
         if (showEditBar && focusedItem !== ingredient) {
@@ -47,13 +59,8 @@ export default function IngredientStockList ({selectedDate, ingredientList, refe
     }
 
     const dateFormat = (date: string) => {
-        const parts = date.split(". ");
-
-        const year = '20' + parts[0].trim();
-        const month = parseInt(parts[1], 10);
-        const day = parseInt(parts[2], 10);
-
-        return `${year}년 ${month}월 ${day}일`;
+        const parts = date.split("-");
+        return `${parts[0]}년 ${parts[1]}월 ${parts[2]}일`;
     }
 
     return (
@@ -78,47 +85,50 @@ export default function IngredientStockList ({selectedDate, ingredientList, refe
                 <th rowSpan={2}>재 질</th>
                 <th rowSpan={2}>두께</th>
                 <th rowSpan={2}>크기</th>
-                <th colSpan={4}>{`${dateFormat(selectedDate)} 자재 재고 현황`}</th>
-                <th rowSpan={2}>적정 재고</th>
+                <th rowSpan={2}>무게</th>
+                <th colSpan={5}>{`${dateFormat(selectedDate)} 자재 재고 현황 (${INGREDIENT_UNIT_TYPE.find(el => el.key === selectedUnit)?.type})`}</th>
               </tr>
               <tr>
                 <th>전일 재고</th>
                 <th>입고</th>
                 <th>생산</th>
                 <th>당일 재고</th>
+                <th>적정 재고</th>
               </tr>
             </S.TableHeader>
             {ingredientList.map((el) => (
-                <IngredientStockItem key={el.id} ingredient={el} showEditBar={() => showEditBarWithData(el)}/>
+                <IngredientStockItem key={el.id} unit={selectedUnit} ingredient={el} showEditBar={() => showEditBarWithData(el)}/>
             ))}
           </S.Table>
         </div>
             </S.Wrapper>
-            <IngredientEditBottombar show={showEditBar} ingredient={focusedItem!} onClose={() => setShowEditBar(false)} refetch={refetch}/>
+            <IngredientEditBottombar show={showEditBar} ingredient={focusedItem!} onClose={() => setShowEditBar(false)} refetch={refetch} isNow={selectedDate === getNowDate()} showDeleteIngredientModal={() => setShowDeleteIngredientModal(true)}/>
             <IngredientCreateBottombar show={showCreateBar} onClose={() => setShowCreateBar(false)} refetch={refetch}/>
-            <DeleteIngredientModal ingredient={focusedItem} isOpen={showDeleteIngredientModal} onClose={() => setShowDeleteIngredientModal(false)}/>
+            <DeleteIngredientModal ingredient={focusedItem!} isOpen={showDeleteIngredientModal} onClose={() => setShowDeleteIngredientModal(false)} refetch={refetch} closeEditBar={() => setShowEditBar(false)}/>
         </>
        
     )
 }
 
 interface IIngredientStockItemProps {
+    unit: string;
     ingredient: Ingredient;
     showEditBar: () => void; 
 }
 
-const IngredientStockItem = ({ingredient, showEditBar} : IIngredientStockItemProps) => {
+const IngredientStockItem = ({unit, ingredient, showEditBar} : IIngredientStockItemProps) => {
     return (
         <S.TableBody onClick={showEditBar}>
             <tr>
             <td>{ingredient.texture}</td>
-            <td>{`${ingredient.thickness} T`}</td>
+            <td>{`${Number.isInteger(ingredient.thickness) ? ingredient.thickness.toFixed(1) : ingredient.thickness} T`}</td>
             <td>{`${ingredient.width} x ${ingredient.height}`}</td>
-            <td>{ingredient.stock.previousDay}</td>
-            <td>{ingredient.stock.incoming || ''}</td>
-            <td>{ingredient.stock.production}</td>
-            <td>{ingredient.stock.currentDay}</td>
-            <td>{ingredient.stock.optimal || ''}</td>
+            <td>{`${getNumberSplitFromNumber(ingredient.weight)} t`}</td>
+            <td>{getNumberSplitFromNumber(unit === "count" ? ingredient.stockCount.previousDay : ingredient.stockWeight.previousDay)}</td>
+            <td>{getNumberSplitFromNumber(unit === "count" ? ingredient.stockCount.incoming : ingredient.stockWeight.incoming)}</td>
+            <td>{getNumberSplitFromNumber(unit === "count" ? ingredient.stockCount.production : ingredient.stockWeight.production)}</td>
+            <td>{getNumberSplitFromNumber(unit === "count" ? ingredient.stockCount.currentDay : ingredient.stockWeight.currentDay)}</td>
+            <td>{getNumberSplitFromNumber(unit === "count" ? (ingredient.stockCount.optimal || 0) : (ingredient.stockWeight.optimal || 0))}</td>
             </tr>
         </S.TableBody>
     )

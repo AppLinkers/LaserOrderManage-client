@@ -3,19 +3,19 @@ import DateInput from "../../inputs/date/DateInput.index";
 import * as S from "../OrderFilter.styles";
 import { INGREDIENT_UNIT_TYPE } from "./FactoryFilter.queries";
 
-interface IFactoryIngredientStockFilterProps {
+interface IFactoryIngredientStatusFilterProps {
     date: string;
     unitType: string;
     onDate: (date: DateValue) => void;
     onUnitType: (type: string) => void;
 }
 
-export default function FactoryIngredientStockFilter({
+export default function FactoryIngredientStatusFilter({
     date,
     unitType,
     onDate,
     onUnitType
-} : IFactoryIngredientStockFilterProps) {
+} : IFactoryIngredientStatusFilterProps) {
     return (
         <S.Wrapper>
             <S.HeaderWrapper>

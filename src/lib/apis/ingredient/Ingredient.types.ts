@@ -1,14 +1,10 @@
 import { IBaseListSimpleResponse } from "../base/base.types";
 
-export type IIngredientStockResponse = {
-    averagePrice: AveragePrice;
+export type IIngredientStatusResponse = {
+    averagePrice: Price;
     totalStock: TotalStock;
     ingredientList: Ingredient[];
-}
-
-export type AveragePrice = {
-    purchase: number;
-    sell: number;
+    date: string
 }
 
 export type TotalStock = {
@@ -22,14 +18,17 @@ export type Ingredient = {
     thickness: number;
     width: number;
     height: number;
-    stock: Stock;
+    weight: number;
+    stockCount: Stock;
+    stockWeight: Stock;
     price: Price;
+    isDeleted: boolean;
 }
 
 export type Stock = {
-    previousDay: number | null;
-    incoming: number | null;
-    production: number | null;
+    previousDay: number;
+    incoming: number;
+    production: number;
     currentDay: number;
     optimal: number | null;
 }
@@ -52,7 +51,7 @@ export type IIngredientRequest = {
     optimalStock: number | null;
 }
 
-export type IIngredientStockRequest = {
+export type IIngredientStatusRequest = {
     stock: {
         incoming: number;
         production: number;

@@ -1,13 +1,13 @@
-import FactoryIngredientStockFilter from "@/src/components/commons/filters/factory/FactoryIngredientStockFilter.index";
+import FactoryIngredientStatusFilter from "@/src/components/commons/filters/factory/FactoryIngredientStatusFilter.index";
 import IngredientTab from "@/src/components/commons/tabs/ingredient/IngredientTab.index";
 import { BodyWrapper, PageTitle } from "@/src/components/commons/wrapper/BodyWrapper.styles";
 import KumohHead from "@/src/components/shared/layout/head/NextHead.index";
-import StockInfo from "./StockInfo.index";
-import { useStockTab } from "@/src/lib/hooks/useTab";
-import { useFactoryIngredientAnalysisFilter, useFactoryIngredientStockFilter } from "@/src/lib/hooks/useFilter";
+import IngredientStatusInfo from "./IngredientStatusInfo.index";
+import { useIngredientTab } from "@/src/lib/hooks/useTab";
+import { useFactoryIngredientStatusFilter } from "@/src/lib/hooks/useFilter";
 import FactoryIngredientAnalysisFilter from "@/src/components/commons/filters/factory/FactoryIngredientAnalysisFilter.index";
-import IngredientStockList from "./list/IngredientStockList.index";
-import { IIngredientGraphItemListResponse, IIngredientStockResponse } from "@/src/lib/apis/ingredient/Ingredient.types";
+import IngredientStatusList from "./list/IngredientStatusList.index";
+import { IIngredientGraphItemListResponse, IIngredientStatusResponse } from "@/src/lib/apis/ingredient/Ingredient.types";
 import IngredientAnalysisGraph from "./graph/IngredientAnalysisGraph.index";
 import { QueryClient, dehydrate, useQuery } from "@tanstack/react-query";
 import { IngredientApi } from "@/src/lib/apis/ingredient/IngredientApi";
@@ -17,20 +17,18 @@ import { getNowDate, getParamDate } from "@/src/lib/utils/utils";
 import { AppPages } from "@/src/lib/constants/appPages";
 import { useState } from "react";
 
-export default function Stock() {
-    const [tab, onTabClick] = useStockTab("재고 현황");
-    const stockFilterArgs = useFactoryIngredientStockFilter();
+export default function Ingredient() {
+    const [tab, onTabClick] = useIngredientTab("재고 현황");
+    const statusFilterArgs = useFactoryIngredientStatusFilter();
 
-    const {data : stockData, refetch : stockRefetch} = useQuery({
+    const {data : statusData, refetch : statusRefetch} = useQuery({
         queryKey: [
-            "ingredientStock",
-            stockFilterArgs.unitType,
-            stockFilterArgs.dateFieldChanged
+            "ingredientStatus",
+            statusFilterArgs.dateFieldChanged
         ],
         queryFn: () => 
-            IngredientApi.GET_INGREDIENT_STOCK(
-                getParamDate(stockFilterArgs.date),
-                stockFilterArgs.unitType
+            IngredientApi.GET_INGREDIENT_STATUS(
+                getParamDate(statusFilterArgs.date)
             ),
     });
 
@@ -48,19 +46,20 @@ export default function Stock() {
                 />
                 {tab === "재고 현황" && (
                     <>
-                        <FactoryIngredientStockFilter {...stockFilterArgs}/>
-                        {stockData && (
+                        <FactoryIngredientStatusFilter {...statusFilterArgs}/>
+                        {statusData && (
                             <>
-                                <StockInfo 
-                                    purchasePrice={stockData.averagePrice.purchase}
-                                    sellPrice={stockData.averagePrice.sell}
-                                    count={stockData.totalStock.count}
-                                    weight={stockData.totalStock.weight}
+                                <IngredientStatusInfo 
+                                    purchasePrice={statusData.averagePrice.purchase}
+                                    sellPrice={statusData.averagePrice.sell}
+                                    count={statusData.totalStock.count}
+                                    weight={statusData.totalStock.weight}
                                 />
-                                <IngredientStockList 
-                                    selectedDate={stockFilterArgs.date}
-                                    ingredientList={stockData.ingredientList}
-                                    refetch={stockRefetch}
+                                <IngredientStatusList 
+                                    selectedDate={statusData.date}
+                                    selectedUnit={statusFilterArgs.unitType}
+                                    ingredientList={statusData.ingredientList}
+                                    refetch={statusRefetch}
                                 />
                             </>
                         )}
@@ -90,11 +89,11 @@ export const getSeverSideProps: GetServerSideProps = async (context) => {
 
     setSsrAxiosHeader(cookies);
     await queryClient.prefetchQuery({
-        queryKey: ["ingredientStock", "count", false],
-        queryFn: () => IngredientApi.GET_INGREDIENT_STOCK(getNowDate(), "count")
+        queryKey: ["ingredientStatus", false],
+        queryFn: () => IngredientApi.GET_INGREDIENT_STATUS(getNowDate())
     });
 
-    const queryState = queryClient.getQueryState(["ingredientStock", "count"]);
+    const queryState = queryClient.getQueryState(["ingredientStatus"]);
     if (queryState?.status === "error") {
         return {
             redirect: {
