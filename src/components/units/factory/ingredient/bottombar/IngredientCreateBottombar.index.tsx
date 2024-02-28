@@ -3,9 +3,7 @@ import * as S from "./IngredientBottombar.styles"
 import { IIngredientBottombarProps } from "./IngredientBottombar.types"
 import { decimalNumberRegex, numberRegex } from "@/src/lib/constants/regex";
 import { ChangeEvent, useState } from "react";
-import { tree } from "next/dist/build/templates/app-page";
-import { event } from "@/src/lib/constants/gtags";
-import { getNumberFromSplitNumber, getNumberSplit } from "@/src/lib/utils/utils";
+import { getNumberFromSplitNumber, getNumberSplitFromString } from "@/src/lib/utils/utils";
 import Spacer from "@/src/components/commons/spacer/Spacer.index";
 import RedoIcon from "@/src/components/commons/icons/RedoIcon.index";
 import { IIngredientRequest } from "@/src/lib/apis/ingredient/Ingredient.types";
@@ -27,7 +25,7 @@ export default function IngredientCreateBottombar({show, onClose, refetch}: IIng
     const [widthFocus, setWidthFocus] = useState(false);
     const [height, onChangeHeight, setHeight] = useInputWithRegex(numberRegex, "");
     const [heightFocus, setHeightFocus] = useState(false);
-    const [weight, onChangeWeight, setWeight] = useInputWithRegex(numberRegex, "");
+    const [weight, onChangeWeight, setWeight] = useInputWithRegex(decimalNumberRegex, "");
     const [weightFocus, setWeightFocus] = useState(false);
     const [purchasePrice, onChangePurchasePrice, setPurchasePrice] = useInputWithRegex(numberRegex, "");
     const [purchasePriceFocus, setPurchasePriceFocus] = useState(false);
@@ -54,6 +52,16 @@ export default function IngredientCreateBottombar({show, onClose, refetch}: IIng
             return;
         }
         onChangeThickness(event);
+    }
+
+    const customOnChangeWeight = (event : ChangeEvent<HTMLInputElement>) => {
+        if (thickness.length === 0 && event.target.value === '.') {
+            return;
+        }
+        if ((event.target.value.match(/\./g) || []).length > 1) {
+            return;
+        }
+        onChangeWeight(event);
     }
 
     const customOnChangePurchasePrice = (event : ChangeEvent<HTMLInputElement>) => {
@@ -87,6 +95,7 @@ export default function IngredientCreateBottombar({show, onClose, refetch}: IIng
         onSuccess: () => {
             refetch();
             onClose();
+            onRefresh();
             setToast({ comment: "자재를 추가했어요" });
         },
         onError: () => {
@@ -206,7 +215,7 @@ export default function IngredientCreateBottombar({show, onClose, refetch}: IIng
                                             placeholder="무게 입력"
                                             value={weight}
                                             maxLength={10}
-                                            onChange={onChangeWeight}
+                                            onChange={customOnChangeWeight}
                                             onFocus={() => setWeightFocus(true)}
                                             onBlur={() => setWeightFocus(false)}
                                         />
@@ -229,7 +238,7 @@ export default function IngredientCreateBottombar({show, onClose, refetch}: IIng
                                         >
                                             <S.EditInput
                                                 placeholder="금액 입력"
-                                                value={purchasePrice === "" ? "" : getNumberSplit(purchasePrice)}
+                                                value={purchasePrice === "" ? "" : getNumberSplitFromString(purchasePrice)}
                                                 maxLength={8}
                                                 onChange={customOnChangePurchasePrice}
                                                 onFocus={() => setPurchasePriceFocus(true)}
@@ -248,7 +257,7 @@ export default function IngredientCreateBottombar({show, onClose, refetch}: IIng
                                         >
                                             <S.EditInput
                                                 placeholder="금액 입력"
-                                                value={sellPrice === "" ? "" : getNumberSplit(sellPrice)}
+                                                value={sellPrice === "" ? "" : getNumberSplitFromString(sellPrice)}
                                                 maxLength={8}
                                                 onChange={customOnChangeSellPrice}
                                                 onFocus={() => setSellPriceFocus(true)}
@@ -272,7 +281,7 @@ export default function IngredientCreateBottombar({show, onClose, refetch}: IIng
                                         >
                                             <S.EditInput
                                                 placeholder="수량 입력"
-                                                value={optimalStock === "" ? "" : getNumberSplit(optimalStock)}
+                                                value={optimalStock === "" ? "" : getNumberSplitFromString(optimalStock)}
                                                 maxLength={8}
                                                 onChange={customOnChangeOptimalStock}
                                                 onFocus={() => setOptimalStockFocus(true)}
@@ -288,7 +297,7 @@ export default function IngredientCreateBottombar({show, onClose, refetch}: IIng
                 </div>
                 <div className="flex-row-end">
                     <S.ButtonWrapper className="flex-row">
-                        <S.CancelButton className="bold14" onClick={onClose}>
+                        <S.CancelButton className="bold14" onClick={() => {onClose(); onRefresh();}}>
                             취소
                         </S.CancelButton>
                         <Spacer width="8px" height="100%" />

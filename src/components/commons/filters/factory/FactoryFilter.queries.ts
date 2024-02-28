@@ -64,6 +64,11 @@ interface IAnalysisPriceItemType {
   key: string;
 }
 
+interface IAnalysisItemType {
+  type: string;
+  key: string;
+}
+
 export const ORDER_QUOTAITON_TYPE: IOrderQuotationType[] = [
   { type: "작성 필요", key: false },
   { type: "작성 완료", key: true },
@@ -110,11 +115,20 @@ export const ANALYSIS_STOCK_ITEM_TYPE: IAnalysisStockItemType[] = [
   {type: "입고", key: "incoming"},
   {type: "생산", key: "production"},
   {type: "재고", key: "stock"},
-  {type: "적정 재고", key: "optimal-stock"}
+  {type: "적정 재고", key: "optimal"}
 ]
 
 export const ANALYSIS_PRICE_ITEM_TYPE: IAnalysisPriceItemType[] = [
   {type: "전체 보기", key: "all"},
+  {type: "구매 단가", key: "purchase"},
+  {type: "판매 단가", key: "sell"}
+]
+
+export const ANALYSIS_ITEM_TYPE: IAnalysisItemType[] = [
+  {type: "입고", key: "incoming"},
+  {type: "생산", key: "production"},
+  {type: "재고", key: "stock"},
+  {type: "적정 재고", key: "optimal"},
   {type: "구매 단가", key: "purchase"},
   {type: "판매 단가", key: "sell"}
 ]

@@ -1,19 +1,19 @@
 import { getCost } from "@/src/lib/utils/utils";
 import styled from "@emotion/styled"
 
-interface IFactoryStockInfoProps {
+interface IIngredientStatusInfoProps {
     purchasePrice: number;
     sellPrice: number;
     count: number;
     weight: number;
 }
 
-export default function StockInfo({
+export default function IngredientStatusInfo({
     purchasePrice,
     sellPrice,
     count,
     weight
-} : IFactoryStockInfoProps) {
+} : IIngredientStatusInfoProps) {
     return (
         <Wrapper className="flex-row">
             <InfoWrapper>

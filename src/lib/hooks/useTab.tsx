@@ -18,7 +18,7 @@ export const useOrderTab = (
   return [tab, onTabClick] as const;
 };
 
-export const useStockTab = (
+export const useIngredientTab = (
   defaultTab: IngredientTab,
 ) => {
   const [tab, setTab] = useState(defaultTab);

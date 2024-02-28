@@ -14,6 +14,7 @@ import {
   } from 'chart.js';
 import { Line } from 'react-chartjs-2';
 import { IBaseListSimpleResponse } from "@/src/lib/apis/base/base.types";
+import { ANALYSIS_ITEM_TYPE } from "@/src/components/commons/filters/factory/FactoryFilter.queries";
 
 interface IIngredientAnalysisGraphProps {
     timeUnit: string;
@@ -54,7 +55,7 @@ export const getDatasets = (graphItemList: IBaseListSimpleResponse<Item>) => {
     for (var i = 0; i < graphItemList.totalElements; i++) {
         const item = graphItemList.contents[i];
         const dataset = {
-            label: item.item,
+            label: ANALYSIS_ITEM_TYPE.find(el => el.key === item.item)?.type,
             data: item.data,
             borderColor: GRAPH_COLORS[i],
             backgroundColor: GRAPH_BACKGROUND_COLORS[i]

@@ -93,8 +93,12 @@ export const getCost = (value: number) => {
   return `${cost}원`;
 };
 
-export const getNumberSplit = (value: string) => {
+export const getNumberSplitFromString = (value: string) => {
   return `${Number(value).toLocaleString("ko-KR")}`;
+}
+
+export const getNumberSplitFromNumber = (value: number) => {
+  return `${value.toLocaleString("ko-KR")}`;
 }
 
 export const getNumberFromSplitNumber = (value: string) => {

@@ -151,7 +151,7 @@ export const useFactoryNewOrderFilter = () => {
   } as const;
 };
 
-export const useFactoryIngredientStockFilter = () => {
+export const useFactoryIngredientStatusFilter = () => {
   const formattedDate = () => {
     const date = new Date();
     const year = date.getFullYear().toString().substr(-2);
