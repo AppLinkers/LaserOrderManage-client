@@ -56,6 +56,20 @@ export const INGREDIENTS: IIngredient[] = [
   { key: "TI" },
 ];
 
+export const GRAPH_COLORS = [
+  "rgb(211, 211, 211)",
+  "rgb(75, 181, 67)",
+  "rgb(33, 150, 243)",
+  "rgb(255, 193, 7)",
+];
+
+export const GRAPH_BACKGROUND_COLORS = [
+  "rgb(211, 211, 211, 0.5)",
+  "rgb(75, 181, 67, 0.5)",
+  "rgb(33, 150, 243, 0.5)",
+  "rgb(255, 193, 7, 0.5)",
+];
+
 export const MAX_THICKNESS = 19;
 
 export const BASE_URL = "https://api.kumoh.org";

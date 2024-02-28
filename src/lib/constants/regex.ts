@@ -8,4 +8,6 @@ export const passwordRegex = new RegExp(
 
 export const numberRegex = new RegExp(/\D/g);
 
+export const decimalNumberRegex = new RegExp(/[^\d.]/g);
+
 export const phoneRegex = new RegExp(/^\d{3}\d{3,4}\d{4}$/);

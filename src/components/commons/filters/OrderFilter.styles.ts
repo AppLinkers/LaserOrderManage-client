@@ -3,7 +3,7 @@ import { IFilterProps } from "./OrderFilter.types";
 
 export const Wrapper = styled.div`
   width: 100%;
-  padding: 25px 30px 24px 30px;
+  padding: 24px 30px;
   border-top: 1px solid var(--color-mediumGray);
   border-bottom: 1px solid var(--color-mediumGray);
 `;

@@ -17,6 +17,7 @@ const NAVIGATION_DEFAULT_MENU = [
 const NAVIGATION_FACTORY_MENU = [
   { name: "신규 거래 목록", page: AppPages.FACTORY_NEW_ORDER_LIST },
   { name: "거래 내역", page: AppPages.FACTORY_ORDER_LIST },
+  { name: "자재 재고 관리", page: AppPages.FACTORY_INGREDIENT}
 ];
 
 interface ILayoutHeaderProps {

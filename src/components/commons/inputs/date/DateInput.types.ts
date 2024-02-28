@@ -4,7 +4,7 @@ export interface ICalenderProps {
   isOpen: boolean;
 }
 
-export interface IOrderDateInputProps {
+export interface IDateInputProps {
   date: string;
   setDate: (date: DateValue) => void;
 }

@@ -7,6 +7,15 @@ import {
   PostProcessingName,
 } from "../apis/order/Order.types";
 
+export const getNowDate = () => {
+  const date = new Date();
+  const year = date.getFullYear();
+  const month = String(date.getMonth() + 1).padStart(2, '0');
+  const day = String(date.getDate()).padStart(2, '0');
+
+  return `${year}-${month}-${day}`;
+}
+
 export const getDate = (value: any) => {
   const date = new Date(value);
   const yyyy = date.getFullYear();
@@ -38,6 +47,39 @@ export const getDateTime = (value: any) => {
   return `${dayDiff}일 전`;
 };
 
+export const getMonthList = (startDate: string, endDate: string) => {
+  const startYear = parseInt(startDate.split("-")[0]);
+  const startMonth = parseInt(startDate.split("-")[1]);
+  const endYear = parseInt(endDate.split("-")[0]);
+  const endMonth = parseInt(endDate.split("-")[1]);
+
+  const monthList = [];
+
+  for (let year = startYear; year <= endYear; year++) {
+    let monthStart = year === startYear ? startMonth : 1;
+    let monthEnd = year === endYear ? endMonth : 12;
+
+    for (let month = monthStart; month <= monthEnd; month++) {
+      monthList.push(`${year}년 ${month}월`);
+    }
+  }
+
+  return monthList;
+}
+
+export const getYearList = (startDate: string, endDate: string) => {
+  const startYear = parseInt(startDate.split("-")[0]);
+  const endYear = parseInt(endDate.split("-")[0]);
+
+  const yearList = [];
+
+  for (let year = startYear; year <= endYear; year++) {
+    yearList.push(`${year}년`);
+  }
+
+  return yearList;
+}
+
 export const getParamDate = (value: string): string => {
   if (value === "") {
     return "";
@@ -50,6 +92,18 @@ export const getCost = (value: number) => {
   const cost = value.toLocaleString("ko-KR");
   return `${cost}원`;
 };
+
+export const getNumberSplitFromString = (value: string) => {
+  return `${Number(value).toLocaleString("ko-KR")}`;
+}
+
+export const getNumberSplitFromNumber = (value: number) => {
+  return `${value.toLocaleString("ko-KR")}`;
+}
+
+export const getNumberFromSplitNumber = (value: string) => {
+  return value.replace(/,/g, '');
+}
 
 export const getCustomerInfo = (
   name: string | null,

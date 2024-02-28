@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { ChangeEvent, useState } from "react";
 import { Manufacturing, OrderStage } from "../apis/order/Order.types";
 import moment from "moment";
 import { DateValue } from "./useDate";
@@ -150,3 +150,162 @@ export const useFactoryNewOrderFilter = () => {
     onResetFilter,
   } as const;
 };
+
+export const useFactoryIngredientStatusFilter = () => {
+  const formattedDate = () => {
+    const date = new Date();
+    const year = date.getFullYear().toString().substr(-2);
+    const month = `${date.getMonth() + 1}`.padStart(2, '0');
+    const day = `${date.getDate()}`.padStart(2, '0');
+    return `${year}. ${month}. ${day}`;
+  }
+
+  const [date, setDate] = useState<string>(formattedDate());
+  const [dateFieldChanged, setDateFieldChanged] = useState(false);
+  const [unitType, setUnitType] = useState("count");
+
+  const onDate = (selectedDate: DateValue) => {
+    const date = moment(selectedDate?.toString()).format("YY. MM. DD");
+    setDate(date);
+    setDateFieldChanged(!dateFieldChanged);
+  };
+
+  const onUnitType = (selectedUnit: string) => {
+    setUnitType(selectedUnit);
+  }
+
+  return {
+    date,
+    dateFieldChanged,
+    unitType,
+    onDate,
+    onUnitType
+  } as const;
+}
+
+export const useFactoryIngredientAnalysisFilter = () => {
+  const [dataType, setDataType] = useState("");
+  const [ingredientId, setIngredientId] = useState<number | string>("");
+  const [dateType, setDateType] = useState("");
+  const [startYear, setStartYear] = useState("");
+  const [startMonth, setStartMonth] = useState("");
+  const [endYear, setEndYear] = useState("");
+  const [endMonth, setEndMonth] = useState("");
+  const [unitType, setUnitType] = useState("");
+  const [itemType, setItemType] = useState("");
+  const [stockItemList, setStockItemList] = useState<string[]>([]);
+  const [priceItemList, setPriceItemList] = useState<string[]>([]);
+
+  const onDataType = (selectedData: string) => {
+    setDataType(selectedData);
+  }
+
+  const onIngredient = (event: ChangeEvent<HTMLSelectElement>) => {
+    setIngredientId(Number(event.target.value));
+  }
+
+  const onDateType = (selectedDateType : string) => {
+    setDateType(selectedDateType);
+  }
+
+  const onStartYear = (selectedStartYear : string) => {
+    setStartYear(selectedStartYear);
+  }
+
+  const onStartMonth = (selectedStartMonth : string) => {
+    setStartMonth(selectedStartMonth);
+  }
+
+  const onEndYear = (selectedEndYear : string) => {
+    setEndYear(selectedEndYear);
+  }
+
+  const onEndMonth = (selectedEndMonth : string) => {
+    setEndMonth(selectedEndMonth);
+  }
+
+  const onUnitType = (selectedUnitType : string) => {
+    setUnitType(selectedUnitType);
+  }
+
+  const onItemType = (selecetdItemType : string) => {
+    if (itemType !== selecetdItemType) {
+      setStockItemList([]);
+      setPriceItemList([]);
+      setItemType(selecetdItemType);
+    }
+  }
+
+  const onStockItem = (selectedStockItem : string) => {
+    if (!stockItemList.includes("all") && selectedStockItem === "all") {
+      setStockItemList(["all"]);
+      return
+    }
+    
+    if (stockItemList.includes("all")) {
+      if (selectedStockItem === "all") {
+        setStockItemList([]);
+      } else {
+        setStockItemList([selectedStockItem])
+      }
+      return
+    }
+
+    setStockItemList((prev) => {
+      if (prev.includes(selectedStockItem)) {
+        return prev.filter((el) => el !== selectedStockItem);
+      } else {
+        return [...prev, selectedStockItem];
+      }
+    });
+  }
+
+  const onPriceItem = (selectedPriceItem : string) => {
+    if (!priceItemList.includes("all") && selectedPriceItem === "all") {
+      setPriceItemList(["all"]);
+      return
+    }
+    
+    if (priceItemList.includes("all")) {
+      if (selectedPriceItem === "all") {
+        setPriceItemList([]);
+      } else {
+        setPriceItemList([selectedPriceItem])
+      }
+      return
+    }
+
+    setPriceItemList((prev) => {
+      if (prev.includes(selectedPriceItem)) {
+        return prev.filter((el) => el !== selectedPriceItem);
+      } else {
+        return [...prev, selectedPriceItem];
+      }
+    });
+  }
+
+  return {
+    dataType,
+    ingredientId,
+    dateType,
+    startYear,
+    startMonth,
+    endYear,
+    endMonth,
+    unitType,
+    itemType,
+    stockItemList,
+    priceItemList,
+    onDataType,
+    onIngredient,
+    onDateType,
+    onStartYear,
+    onStartMonth,
+    onEndYear,
+    onEndMonth,
+    onUnitType,
+    onItemType,
+    onStockItem,
+    onPriceItem
+   } as const
+}

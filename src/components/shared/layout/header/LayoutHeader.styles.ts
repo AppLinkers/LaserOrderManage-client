@@ -32,8 +32,8 @@ export const PcMenu = styled.div`
 `;
 
 export const MenuWrapper = styled.div<IHeaderProps>`
-  margin-right: 80px;
-  gap: 80px;
+  margin-right: 60px;
+  gap: 60px;
 
   & > a {
     color: ${(props) =>
