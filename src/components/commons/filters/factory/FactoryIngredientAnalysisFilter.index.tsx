@@ -2,18 +2,17 @@ import styled from "@emotion/styled";
 import * as S from "../OrderFilter.styles";
 import { ANALYSIS_DATA_TYPE, ANALYSIS_DATE_TYPE, ANALYSIS_ITEM_UNIT_TYPE, ANALYSIS_PRICE_ITEM_TYPE, ANALYSIS_STOCK_ITEM_TYPE, INGREDIENT_UNIT_TYPE } from "./FactoryFilter.queries";
 import Spacer from "../../spacer/Spacer.index";
-import { ChangeEvent } from "react";
 import { useQuery } from "@tanstack/react-query";
 import { IngredientApi } from "@/src/lib/apis/ingredient/IngredientApi";
 import { useFactoryIngredientAnalysisFilter } from "@/src/lib/hooks/useFilter";
 import { useToastify } from "@/src/lib/hooks/useToastify";
 import { IIngredientGraphItemListResponse } from "@/src/lib/apis/ingredient/Ingredient.types";
 
-const yearRange = Array.from({ length: new Date().getFullYear() - 2024 + 1 }, (_, i) => 2024 + i);
+const yearRange = Array.from({ length: new Date().getFullYear() - 2023 + 1 }, (_, i) => 2023 + i);
 const monthRange = Array.from({ length: 12}, (_, i) => 1 + i);
 
 interface IFactoryIngredientAnalysisFilterProps {
-    setAnalysisData: (ingredientGraphItemListResponse : IIngredientGraphItemListResponse) => void;
+    setAnalysisData: (ingredientGraphItemListResponse : IIngredientGraphItemListResponse|undefined) => void;
 }
 
 export default function FactoryIngredientAnalysisFilter({setAnalysisData} : IFactoryIngredientAnalysisFilterProps) {
@@ -29,18 +28,16 @@ export default function FactoryIngredientAnalysisFilter({setAnalysisData} : IFac
         analysisFilterArgs.startYear !== "" &&
         analysisFilterArgs.endYear !== "" &&
         (analysisFilterArgs.dateType === "month" ? ((analysisFilterArgs.startMonth !== "") && (analysisFilterArgs.endMonth !== "")) : true) &&
-        analysisFilterArgs.unitType !== "" &&
         analysisFilterArgs.itemType !== "" &&
         (analysisFilterArgs.itemType === "stock" ? (analysisFilterArgs.stockItemList.length > 0) : true) &&
+        (analysisFilterArgs.itemType === "stock" ? (analysisFilterArgs.unitType !== "") : true) &&
         (analysisFilterArgs.itemType === "price" ? (analysisFilterArgs.priceItemList.length > 0) : true);
 
     const { setToast } = useToastify();
 
     const formattedDate = (dateType : string, year : string, month : string) => {
         const formattedMonth = dateType === "year" ? "01" : month.padStart(2, '0');
-
-        // "YYYY-MM" 형식으로 결과를 반환합니다.
-        return `${year}-${formattedMonth}`;
+        return `${year}-${formattedMonth}-01`;
     }
 
     const { data : analysisData, refetch : analaysisRefetch} = useQuery({
@@ -51,21 +48,38 @@ export default function FactoryIngredientAnalysisFilter({setAnalysisData} : IFac
             analysisFilterArgs.dateType,
             formattedDate(analysisFilterArgs.dateType, analysisFilterArgs.startYear, analysisFilterArgs.startMonth),
             formattedDate(analysisFilterArgs.dateType, analysisFilterArgs.endYear, analysisFilterArgs.endMonth),
-            analysisFilterArgs.unitType,
             analysisFilterArgs.itemType,
             analysisFilterArgs.stockItemList.join(","),
+            analysisFilterArgs.unitType,
             analysisFilterArgs.priceItemList.join(",")
         ),
         enabled: false
     })
 
     const onSearch = () => {
+        setAnalysisData(undefined);
+
         if (!searchAvailable) {
             setToast({ comment: "모든 조회 필터를 선택해주세요"});
             return;
         }
-        analaysisRefetch();
-        setAnalysisData(analysisData!);
+        const startDate = new Date(formattedDate(analysisFilterArgs.dataType, analysisFilterArgs.startYear, analysisFilterArgs.startMonth));
+        const endDate = new Date(formattedDate(analysisFilterArgs.dataType, analysisFilterArgs.endYear, analysisFilterArgs.endMonth));
+        const nowDate = new Date(formattedDate(analysisFilterArgs.dataType, String(new Date().getFullYear()), String(new Date().getMonth())));
+
+        if (startDate > endDate) {
+            setToast({ comment: "조회 시작 날짜는 종료 날짜 이전이어야 합니다."});
+            return;
+        }
+
+        if ((nowDate < startDate) || (nowDate < endDate)) {
+            setToast({ comment: "조회 시작 및 종료 날짜는 현재 날짜 이전이어야 합니다."});
+            return;
+        }
+        analaysisRefetch().then((data) => {
+            setAnalysisData(data.data!);
+        });
+        
     }
 
     return (
@@ -104,7 +118,7 @@ export default function FactoryIngredientAnalysisFilter({setAnalysisData} : IFac
                             </Option>
                             {ingredientListData?.contents.map((el) => (
                                 <Option key={el.id} value={el.id}>
-                                {`${el.texture} - ${el.thickness} T`}
+                                {`${el.texture} - ${Number.isInteger(el.thickness) ? el.thickness.toFixed(1) : el.thickness} T`}
                             </Option>
                             ))}
                             
@@ -178,19 +192,6 @@ export default function FactoryIngredientAnalysisFilter({setAnalysisData} : IFac
                     )}
                 </S.FilterWrapper>
                 <S.FilterWrapper className="flex-row">
-                    <S.FilterLabel className="medium16">단위</S.FilterLabel>
-                    {INGREDIENT_UNIT_TYPE.map((el) => (
-                    <S.Filter
-                        className="medium16"
-                        key={el.type}
-                        isSelect={analysisFilterArgs.unitType === el.key}
-                        onClick={() => analysisFilterArgs.onUnitType(el.key)}
-                    >
-                        {el.type}
-                    </S.Filter>
-                    ))}
-                </S.FilterWrapper>
-                <S.FilterWrapper className="flex-row">
                     <S.FilterLabel className="medium16">조회 항목</S.FilterLabel>
                     <div>
                         <div className="flex-row">
@@ -206,6 +207,16 @@ export default function FactoryIngredientAnalysisFilter({setAnalysisData} : IFac
                             ))}
                         </div>
                         <Spacer width="100%" height="10px" />
+                        {analysisFilterArgs.itemType === "" && (
+                            <>
+                                <S.FilterSmall
+                                className="medium14"
+                                isSelect={false}
+                                >
+                                전체보기
+                              </S.FilterSmall>
+                            </>
+                        )}
                         {analysisFilterArgs.itemType === "stock" && (
                             <>
                             {ANALYSIS_STOCK_ITEM_TYPE.map((el) => (
@@ -235,7 +246,19 @@ export default function FactoryIngredientAnalysisFilter({setAnalysisData} : IFac
                             </>
                         )}
                     </div>
-                    
+                </S.FilterWrapper>
+                <S.FilterWrapper className="flex-row">
+                    <S.FilterLabel className="medium16">단위</S.FilterLabel>
+                    {INGREDIENT_UNIT_TYPE.map((el) => (
+                    <S.Filter
+                        className="medium16"
+                        key={el.type}
+                        isSelect={(analysisFilterArgs.itemType === "stock") && (analysisFilterArgs.unitType === el.key)}
+                        onClick={() => (analysisFilterArgs.itemType === "stock") ? analysisFilterArgs.onUnitType(el.key) : {}}
+                    >
+                        {el.type}
+                    </S.Filter>
+                    ))}
                 </S.FilterWrapper>
             </FilterWrapper>
             <SearchButton 

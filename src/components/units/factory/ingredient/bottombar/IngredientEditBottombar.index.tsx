@@ -93,6 +93,16 @@ export default function IngredientEditBottombar({show, ingredient, onClose, refe
         onChangeOptimalStock(event);
     }
 
+    const onRefresh = () => {
+        setPreviousDayStock(String(ingredient?.stockCount.previousDay ?? 0));
+        setIncomingStock(String(ingredient?.stockCount.incoming ?? ""));
+        setProductionStock(String(ingredient?.stockCount.production ?? 0));
+        setCurrentDayStock(String(ingredient?.stockCount.currentDay));
+        setPurchasePrice(String(ingredient?.price.purchase));
+        setSellPrice(String(ingredient?.price.sell));
+        setOptimalStock(String(ingredient?.stockCount.optimal ?? ""));
+    }
+
     const { mutate: editMutate } = useMutation({
         mutationFn: IngredientApi.EDIT_INGREDIENT_STATUS,
         onSuccess: () => {
@@ -341,7 +351,7 @@ export default function IngredientEditBottombar({show, ingredient, onClose, refe
                         {(isNow && !ingredient?.isDeleted) && (
                             <>
                                 <S.ButtonWrapper className="flex-row">
-                                    <S.CancelButton className="bold14" onClick={onClose}>
+                                    <S.CancelButton className="bold14" onClick={() => {onClose(); onRefresh();}}>
                                         취소
                                     </S.CancelButton>
                                     <Spacer width="8px" height="100%" />

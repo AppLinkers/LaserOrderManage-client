@@ -34,6 +34,10 @@ export default function Ingredient() {
 
     const [analysisData, setAnalysisData] = useState<IIngredientGraphItemListResponse>();
 
+    const refreshAnalysisData = () => {
+        setAnalysisData(undefined);
+    }
+
     return (
         <>
             <KumohHead title="자재 재고 관리 | 금오거래센터" />
@@ -43,6 +47,7 @@ export default function Ingredient() {
                     tabs={["재고 현황", "재고 분석"]}
                     selectedTab={tab}
                     onTabClick={onTabClick}
+                    refreshAnalysisData={refreshAnalysisData}
                 />
                 {tab === "재고 현황" && (
                     <>

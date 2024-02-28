@@ -48,9 +48,9 @@ export const IngredientApi = {
         timeUnit: string,
         startDate: string,
         endDate: string,
-        unit: string,
         itemUnit: string,
         stockItem: string,
+        stockUnit: string,
         priceItem: string
     ): Promise<IIngredientGraphItemListResponse> => {
         let queryUrl = `/factory/ingredient/analysis?data=${data}`;
@@ -59,10 +59,10 @@ export const IngredientApi = {
             queryUrl += `&ingredient-id=${ingredientId}`;
         }
 
-        queryUrl += `&time-unit=${timeUnit}&start-date=${startDate}&end-date=${endDate}&unit=${unit}&item-unit=${itemUnit}`;
+        queryUrl += `&time-unit=${timeUnit}&start-date=${startDate}&end-date=${endDate}&item-unit=${itemUnit}`;
 
         if (itemUnit === "stock") {
-            queryUrl += `&stock-item=${stockItem}`;
+            queryUrl += `&stock-item=${stockItem}&stock-unit=${stockUnit}`;
         }
 
         if (itemUnit === "price") {

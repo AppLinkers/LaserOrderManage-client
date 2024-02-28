@@ -95,6 +95,7 @@ export default function IngredientCreateBottombar({show, onClose, refetch}: IIng
         onSuccess: () => {
             refetch();
             onClose();
+            onRefresh();
             setToast({ comment: "자재를 추가했어요" });
         },
         onError: () => {
@@ -296,7 +297,7 @@ export default function IngredientCreateBottombar({show, onClose, refetch}: IIng
                 </div>
                 <div className="flex-row-end">
                     <S.ButtonWrapper className="flex-row">
-                        <S.CancelButton className="bold14" onClick={onClose}>
+                        <S.CancelButton className="bold14" onClick={() => {onClose(); onRefresh();}}>
                             취소
                         </S.CancelButton>
                         <Spacer width="8px" height="100%" />
