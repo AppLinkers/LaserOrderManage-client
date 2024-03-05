@@ -57,25 +57,28 @@ export default function FactoryIngredientAnalysisFilter({setAnalysisData} : IFac
     })
 
     const onSearch = () => {
-        setAnalysisData(undefined);
-
         if (!searchAvailable) {
+            setAnalysisData(undefined);
             setToast({ comment: "모든 조회 필터를 선택해주세요"});
             return;
         }
-        const startDate = new Date(formattedDate(analysisFilterArgs.dataType, analysisFilterArgs.startYear, analysisFilterArgs.startMonth));
-        const endDate = new Date(formattedDate(analysisFilterArgs.dataType, analysisFilterArgs.endYear, analysisFilterArgs.endMonth));
-        const nowDate = new Date(formattedDate(analysisFilterArgs.dataType, String(new Date().getFullYear()), String(new Date().getMonth())));
+        const startDate = new Date(formattedDate(analysisFilterArgs.dateType, analysisFilterArgs.startYear, analysisFilterArgs.startMonth));
+        const endDate = new Date(formattedDate(analysisFilterArgs.dateType, analysisFilterArgs.endYear, analysisFilterArgs.endMonth));
+        const nowDate = new Date(formattedDate(analysisFilterArgs.dateType, String(new Date().getFullYear()), String(new Date().getMonth() + 1)));
 
         if (startDate > endDate) {
+            setAnalysisData(undefined);
             setToast({ comment: "조회 시작 날짜는 종료 날짜 이전이어야 합니다."});
             return;
         }
 
-        if ((nowDate < startDate) || (nowDate < endDate)) {
+        analysisFilterArgs.dateType === "month" ? nowDate.setMonth(nowDate.getMonth() + 1) : nowDate.setFullYear(nowDate.getFullYear() + 1);
+        if ((nowDate <= startDate) || (nowDate <= endDate)) {
+            setAnalysisData(undefined);
             setToast({ comment: "조회 시작 및 종료 날짜는 현재 날짜 이전이어야 합니다."});
             return;
         }
+
         analaysisRefetch().then((data) => {
             setAnalysisData(data.data!);
         });
