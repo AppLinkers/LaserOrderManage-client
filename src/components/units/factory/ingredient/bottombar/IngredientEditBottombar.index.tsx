@@ -10,8 +10,10 @@ import { getNumberFromSplitNumber, getNumberSplitFromString } from "@/src/lib/ut
 import { useMutation } from "@tanstack/react-query";
 import { IngredientApi } from "@/src/lib/apis/ingredient/IngredientApi";
 import { useToastify } from "@/src/lib/hooks/useToastify";
+import { UserAuthority } from "@/src/lib/apis/user/User.types";
 
 interface IIngredientEditBottombarProps extends IIngredientBottombarProps {
+    authorityList: UserAuthority[];
     ingredient: Ingredient;
     onClose: () => void;
     refetch: () => void;
@@ -19,7 +21,7 @@ interface IIngredientEditBottombarProps extends IIngredientBottombarProps {
     showDeleteIngredientModal: () => void;
 }
 
-export default function IngredientEditBottombar({show, ingredient, onClose, refetch, isNow, showDeleteIngredientModal}: IIngredientEditBottombarProps) {
+export default function IngredientEditBottombar({show, authorityList, ingredient, onClose, refetch, isNow, showDeleteIngredientModal}: IIngredientEditBottombarProps) {
     const [previousDayStock, setPreviousDayStock] = useState("");
     const [incomingStock, onChangeIncomingStock, setIncomingStock] = useInputWithRegex(numberRegex, "");
     const [incomingStockFocus, setIncomingStockFocus] = useState(false);
@@ -135,7 +137,7 @@ export default function IngredientEditBottombar({show, ingredient, onClose, refe
         <S.Wrapper show={show}> 
             <S.Header className="flex-row-between">
                 <p className="bold20">{`${ingredient?.texture} - ${Number.isInteger(ingredient?.thickness) ? ingredient?.thickness.toFixed(1) : ingredient?.thickness} T`}</p>
-                {(isNow && !ingredient?.isDeleted) && (
+                {(authorityList.includes("AUTHORITY_ADMIN")) && (isNow && !ingredient?.isDeleted) && (
                     <>
                         <S.DeleteBox className="flex-row-align-center" onClick={showDeleteIngredientModal}>
                             <TrashIcon size={20} onClick={() => {}}/>
@@ -245,7 +247,7 @@ export default function IngredientEditBottombar({show, ingredient, onClose, refe
                                     <S.FieldWrapper className="flex-row-align-center">
                                         <S.FieldLabel className="medium16">구매 단가</S.FieldLabel>
                                         <S.FieldValue className="regular16 flex-row-between-center">
-                                            {(isNow && !ingredient?.isDeleted) && (
+                                            {(authorityList.includes("AUTHORITY_ADMIN") && isNow && !ingredient?.isDeleted) && (
                                                 <>
                                                     <S.EditInputWrapper
                                                         className="flex-row-between-center"
@@ -262,7 +264,7 @@ export default function IngredientEditBottombar({show, ingredient, onClose, refe
                                                     </S.EditInputWrapper>
                                                 </>
                                             )}
-                                            {!(isNow && !ingredient?.isDeleted) && (
+                                            {!(authorityList.includes("AUTHORITY_ADMIN") && isNow && !ingredient?.isDeleted) && (
                                                 <>
                                                     <S.FieldInnerWrapper
                                                         className="flex-row-between-center"
@@ -277,7 +279,7 @@ export default function IngredientEditBottombar({show, ingredient, onClose, refe
                                     <S.FieldWrapper className="flex-row-align-center">
                                         <S.FieldLabel className="medium16">판매 단가</S.FieldLabel>
                                         <S.FieldValue className="regular16 flex-row-between-center">
-                                            {(isNow && !ingredient?.isDeleted) && (
+                                            {(authorityList.includes("AUTHORITY_ADMIN") && isNow && !ingredient?.isDeleted) && (
                                                 <>
                                                     <S.EditInputWrapper
                                                         className="flex-row-between-center"
@@ -294,7 +296,7 @@ export default function IngredientEditBottombar({show, ingredient, onClose, refe
                                                     </S.EditInputWrapper>
                                                 </>
                                             )}
-                                            {!(isNow && !ingredient?.isDeleted) && (
+                                            {!(authorityList.includes("AUTHORITY_ADMIN") && isNow && !ingredient?.isDeleted) && (
                                                 <>
                                                     <S.FieldInnerWrapper
                                                         className="flex-row-between-center"
@@ -314,7 +316,7 @@ export default function IngredientEditBottombar({show, ingredient, onClose, refe
                                     <S.FieldWrapper className="flex-row-align-center">
                                         <S.FieldLabel className="medium16">적정 재고</S.FieldLabel>
                                         <S.FieldValue className="regular16 flex-row-between-center">
-                                            {(isNow && !ingredient?.isDeleted) && (
+                                            {(authorityList.includes("AUTHORITY_ADMIN") && isNow && !ingredient?.isDeleted) && (
                                                 <>
                                                     <S.EditInputWrapper
                                                         className="flex-row-between-center"
@@ -331,7 +333,7 @@ export default function IngredientEditBottombar({show, ingredient, onClose, refe
                                                     </S.EditInputWrapper>
                                                 </>
                                             )}
-                                            {!(isNow && !ingredient?.isDeleted) && (
+                                            {!(authorityList.includes("AUTHORITY_ADMIN") && isNow && !ingredient?.isDeleted) && (
                                                 <>
                                                     <S.FieldInnerWrapper
                                                         className="flex-row-between-center"

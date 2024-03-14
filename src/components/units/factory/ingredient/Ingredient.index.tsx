@@ -16,8 +16,11 @@ import { setSsrAxiosHeader } from "@/src/lib/utils/setSsrAxiosHeader";
 import { getNowDate, getParamDate } from "@/src/lib/utils/utils";
 import { AppPages } from "@/src/lib/constants/appPages";
 import { useState } from "react";
+import { useRecoilValue } from "recoil";
+import { authState } from "@/src/store/auth";
 
 export default function Ingredient() {
+    const auth = useRecoilValue(authState);
     const [tab, onTabClick] = useIngredientTab("재고 현황");
     const statusFilterArgs = useFactoryIngredientStatusFilter();
 
@@ -61,6 +64,7 @@ export default function Ingredient() {
                                     weight={statusData.totalStock.weight}
                                 />
                                 <IngredientStatusList 
+                                    authorityList={auth.authorityList}
                                     selectedDate={statusData.date}
                                     selectedUnit={statusFilterArgs.unitType}
                                     ingredientList={statusData.ingredientList}

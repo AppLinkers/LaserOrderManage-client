@@ -28,6 +28,7 @@ export interface IOrderInfoSectionProps {
 export interface IUrgentSectionProps {
   isUrgent: boolean;
   orderId: string;
+  authorityList: UserAuthority[];
 }
 
 export interface ICustomerInfoSectionProps {

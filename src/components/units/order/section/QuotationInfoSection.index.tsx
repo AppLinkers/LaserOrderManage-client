@@ -29,7 +29,7 @@ export default function QuotationInfoSection({
       <S.Wrapper ref={sectionRef}>
         <S.TitleWrapper className="flex-row-between">
           <S.Title className="bold18">견적서</S.Title>
-          {authorityList.includes("ROLE_FACTORY") && status === "견적 대기" && (
+          {authorityList.includes("ROLE_FACTORY") && authorityList.includes("AUTHORITY_ADMIN") && status === "견적 대기" && (
             <S.EditBox className="flex-row" onClick={() => setShowModal(true)}>
               <EditIcon size={20} />
               <Spacer width="5px" height="100%" />
@@ -42,7 +42,7 @@ export default function QuotationInfoSection({
         <S.Section className="flex-row">
           {quotation === null ? (
             <EmptyQuotation className="regular16 flex-center">
-              {authorityList.includes("ROLE_FACTORY") && status === "견적 대기"
+              {authorityList.includes("ROLE_FACTORY") && authorityList.includes("AUTHORITY_ADMIN") && status === "견적 대기"
                 ? "견적서를 추가해주세요"
                 : "아직 견적서가 등록되지 않았어요"}
             </EmptyQuotation>
@@ -90,6 +90,7 @@ export default function QuotationInfoSection({
       <OrderDetailBottombar
         showCondition={
           authorityList.includes("ROLE_FACTORY") &&
+          authorityList.includes("AUTHORITY_ADMIN") &&
           status === "견적 대기" &&
           quotation === null
         }

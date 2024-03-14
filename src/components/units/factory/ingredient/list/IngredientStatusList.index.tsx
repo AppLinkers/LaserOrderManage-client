@@ -8,15 +8,17 @@ import { Ingredient } from "@/src/lib/apis/ingredient/Ingredient.types";
 import DeleteIngredientModal from "@/src/components/commons/modal/ingredient/DeleteIngredientModal.index";
 import { INGREDIENT_UNIT_TYPE } from "@/src/components/commons/filters/factory/FactoryFilter.queries";
 import { getNowDate, getNumberSplitFromNumber } from "@/src/lib/utils/utils";
+import { UserAuthority } from "@/src/lib/apis/user/User.types";
 
 interface IIngredientStatusListProps {
+    authorityList: UserAuthority[];
     selectedDate: string;
     selectedUnit: string;
     ingredientList: Ingredient[];
     refetch: () => void;
 }
 
-export default function IngredientStatusList ({selectedDate, selectedUnit, ingredientList, refetch}: IIngredientStatusListProps) {
+export default function IngredientStatusList ({authorityList, selectedDate, selectedUnit, ingredientList, refetch}: IIngredientStatusListProps) {
     const [date, setDate] = useState(getNowDate());
     const [showEditBar, setShowEditBar] = useState(false);
     const [showCreateBar, setShowCreateBar] = useState(false);
@@ -65,19 +67,23 @@ export default function IngredientStatusList ({selectedDate, selectedUnit, ingre
 
     return (
         <>
-            <S.Wrapper> 
-                <S.Header className="flex-row-end">
-                    <S.CreateBox
-                        className="flex-row"
-                        onClick={customShowCreateBar}
-                    >
-                        <EditIcon size={20}/>
-                        <Spacer width="5px" height="100%" />
-                        <S.CreateBoxText className="regular16">
-                            자재 추가하기
-                        </S.CreateBoxText>
-                    </S.CreateBox>
-                </S.Header>
+            <S.Wrapper>
+                {authorityList.includes("AUTHORITY_ADMIN") && (
+                    <>
+                        <S.Header className="flex-row-end">
+                            <S.CreateBox
+                                className="flex-row"
+                                onClick={customShowCreateBar}
+                            >
+                                <EditIcon size={20}/>
+                                <Spacer width="5px" height="100%" />
+                                <S.CreateBoxText className="regular16">
+                                    자재 추가하기
+                                </S.CreateBoxText>
+                            </S.CreateBox>
+                        </S.Header> 
+                    </>
+                )} 
                 <div>
           <S.Table>
             <S.TableHeader>
@@ -102,7 +108,7 @@ export default function IngredientStatusList ({selectedDate, selectedUnit, ingre
           </S.Table>
         </div>
             </S.Wrapper>
-            <IngredientEditBottombar show={showEditBar} ingredient={focusedItem!} onClose={() => setShowEditBar(false)} refetch={refetch} isNow={selectedDate === getNowDate()} showDeleteIngredientModal={() => setShowDeleteIngredientModal(true)}/>
+            <IngredientEditBottombar show={showEditBar} authorityList={authorityList} ingredient={focusedItem!} onClose={() => setShowEditBar(false)} refetch={refetch} isNow={selectedDate === getNowDate()} showDeleteIngredientModal={() => setShowDeleteIngredientModal(true)}/>
             <IngredientCreateBottombar show={showCreateBar} onClose={() => setShowCreateBar(false)} refetch={refetch}/>
             <DeleteIngredientModal ingredient={focusedItem!} isOpen={showDeleteIngredientModal} onClose={() => setShowDeleteIngredientModal(false)} refetch={refetch} closeEditBar={() => setShowEditBar(false)}/>
         </>

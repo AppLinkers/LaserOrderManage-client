@@ -15,6 +15,7 @@ const URGENT_SELECT = [
 export default function UrgentSection({
   isUrgent,
   orderId,
+  authorityList
 }: IUrgentSectionProps) {
   const [selectStatus, setSelectStatus] = useState(isUrgent);
   const { setToast } = useToastify();
@@ -63,7 +64,7 @@ export default function UrgentSection({
             className="medium16 flex-center"
             isSelect={el.status === selectStatus}
             key={el.name}
-            onClick={() => onSelect(el.status)}
+            onClick={() => {authorityList.includes("AUTHORITY_ADMIN") ? onSelect(el.status) : {}}}
           >
             {el.name}
           </UrgentSelect>

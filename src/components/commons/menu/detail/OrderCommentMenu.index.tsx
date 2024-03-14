@@ -11,17 +11,20 @@ import { OrderDetailApi } from "@/src/lib/apis/order/detail/OrderDetailApi";
 import { getDateTime } from "@/src/lib/utils/utils";
 import { AxiosError } from "axios";
 import { useApiError } from "@/src/lib/hooks/useApiError";
+import { UserAuthority } from "@/src/lib/apis/user/User.types";
 
 interface IOrderCommentMenuProps {
   expanded: boolean;
   isBottom: boolean;
   orderId: string;
+  authorityList: UserAuthority[];
 }
 
 export default function OrderCommentMenu({
   expanded,
   isBottom,
   orderId,
+  authorityList
 }: IOrderCommentMenuProps) {
   const [inputFocus, setInputFocus] = useState(false);
   const inputArgs = useInputWithMaxLength(200);
@@ -86,18 +89,24 @@ export default function OrderCommentMenu({
             />
           ))}
       </S.CommentsWrapper>
-      <S.InputWrapper className="flex-row-between" isFocus={inputFocus}>
-        <S.CommentInput
-          placeholder="댓글 작성.."
-          className="regular12"
-          value={inputArgs.value}
-          onChange={inputArgs.onChange}
-          maxLength={200}
-          onFocus={() => setInputFocus(true)}
-          onBlur={() => setInputFocus(false)}
-        />
-        {inputArgs.value.length > 0 && <SendIcon size={24} onSend={onSend} />}
-      </S.InputWrapper>
+      {
+        authorityList.includes("AUTHORITY_ADMIN") && (
+          <>
+            <S.InputWrapper className="flex-row-between" isFocus={inputFocus}>
+              <S.CommentInput
+                placeholder="댓글 작성.."
+                className="regular12"
+                value={inputArgs.value}
+                onChange={inputArgs.onChange}
+                maxLength={200}
+                onFocus={() => setInputFocus(true)}
+                onBlur={() => setInputFocus(false)}
+              />
+              {inputArgs.value.length > 0 && <SendIcon size={24} onSend={onSend} />}
+            </S.InputWrapper>
+          </>
+        )
+      }
     </S.Wrapper>
   );
 }
