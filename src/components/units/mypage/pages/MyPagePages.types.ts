@@ -1,5 +1,5 @@
-import { UserType } from "@/src/lib/apis/user/User.types";
+import { UserAuthority } from "@/src/lib/apis/user/User.types";
 
 export interface IAccoutPageProps {
-  role: UserType;
+  authorityList: UserAuthority[];
 }

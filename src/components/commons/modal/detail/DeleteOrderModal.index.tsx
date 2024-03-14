@@ -24,7 +24,7 @@ export default function DeleteOrderModal({
     onSuccess: () => {
       setToast({ comment: "거래를 삭제했어요" });
       const route =
-        auth.role === "ROLE_CUSTOMER"
+        auth.authorityList.includes("ROLE_CUSTOMER")
           ? AppPages.CUSTOMER_ORDER_LIST
           : AppPages.FACTORY_ORDER_LIST;
       router.replace(route);

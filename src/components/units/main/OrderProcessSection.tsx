@@ -15,7 +15,7 @@ const OrderProcessSection = () => {
   const auth = useRecoilValue(authState);
   const router = useRouter();
   const path =
-    auth.role === "ROLE_CUSTOMER"
+    auth.authorityList.includes("ROLE_CUSTOMER")
       ? AppPages.CUSTOMER_CREATE_ORDER
       : AppPages.LOGIN;
   return (

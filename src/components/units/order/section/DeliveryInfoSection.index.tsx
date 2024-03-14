@@ -9,7 +9,7 @@ import { IDeliveryAddress } from "@/src/lib/apis/user/customer/Customer.types";
 
 export default function DeliveryInfoSection({
   data,
-  role,
+  authorityList,
   status,
   orderId,
 }: IDeliveryInfoSectionProps) {
@@ -25,7 +25,7 @@ export default function DeliveryInfoSection({
       <S.Wrapper>
         <S.TitleWrapper className="flex-row-between">
           <S.Title className="bold18">배송 정보</S.Title>
-          {role === "ROLE_CUSTOMER" &&
+          {authorityList.includes("ROLE_CUSTOMER") &&
             !(status === "제작 완료" || status === "거래 완료") && (
               <S.EditBox
                 className="flex-row"

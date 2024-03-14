@@ -22,7 +22,7 @@ import { BLUR_URL_1_1 } from "@/src/lib/constants/constant";
 export default function DrawingInfoSection({
   sectionRef,
   data,
-  role,
+  authorityList,
   status,
   orderId,
 }: IDrawingInfoSectionProps) {
@@ -78,7 +78,7 @@ export default function DrawingInfoSection({
       <S.Wrapper ref={sectionRef}>
         <S.TitleWrapper className="flex-row-between">
           <S.Title className="bold18">도면 정보</S.Title>
-          {role === "ROLE_CUSTOMER" &&
+          {authorityList.includes("ROLE_CUSTOMER") &&
             !(status === "제작 완료" || status === "거래 완료") && (
               <S.EditBox
                 className="flex-row"
@@ -103,7 +103,7 @@ export default function DrawingInfoSection({
               <DrawingInfoItem
                 key={el.id}
                 data={el}
-                role={role}
+                authorityList={authorityList}
                 status={status}
                 onEditDrawing={() => onEditDrawing(el)}
                 onDeleteDrawing={() => onDeleteDrawing(el.id)}
@@ -135,7 +135,7 @@ export default function DrawingInfoSection({
 
 function DrawingInfoItem({
   data,
-  role,
+  authorityList,
   status,
   onEditDrawing,
   onDeleteDrawing,
@@ -198,7 +198,7 @@ function DrawingInfoItem({
           >
             다운로드
           </ItemMenuTitle>
-          {role === "ROLE_CUSTOMER" &&
+          {authorityList.includes("ROLE_CUSTOMER") &&
             !(status === "제작 완료" || status === "거래 완료") && (
               <>
                 <ItemMenuTitle className="regular14" onClick={onEdit}>

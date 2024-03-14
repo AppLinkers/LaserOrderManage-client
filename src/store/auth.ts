@@ -1,16 +1,16 @@
 import { atom } from "recoil";
-import { UserType } from "../lib/apis/user/User.types";
+import { UserAuthority } from "../lib/apis/user/User.types";
 
 export interface IAuthState {
   isAuthenticated: boolean;
   accessToken: string;
-  role: UserType;
+  authorityList: UserAuthority[];
 }
 
 const initialState: IAuthState = {
   isAuthenticated: false,
   accessToken: "",
-  role: null,
+  authorityList: [],
 };
 
 export const authState = atom<IAuthState>({

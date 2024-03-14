@@ -103,7 +103,7 @@ export default function OrderDetai() {
                 data={data.order}
                 status={status}
               />
-              {auth.role === "ROLE_FACTORY" && status !== "거래 완료" && (
+              {auth.authorityList.includes("ROLE_CUSTOMER") && status !== "거래 완료" && (
                 <>
                   <Spacer width="100%" height="48px" />
                   <UrgentSection
@@ -121,7 +121,7 @@ export default function OrderDetai() {
               <Spacer width="100%" height="60px" />
               <DeliveryInfoSection
                 data={data.order.deliveryAddress}
-                role={auth.role}
+                authorityList={auth.authorityList}
                 status={status}
                 orderId={String(orderId)}
               />
@@ -129,7 +129,7 @@ export default function OrderDetai() {
               <DrawingInfoSection
                 sectionRef={scrollArgs.drawingInfoRef}
                 data={data.order.drawingList}
-                role={auth.role}
+                authorityList={auth.authorityList}
                 status={status}
                 orderId={String(orderId)}
               />
@@ -137,7 +137,7 @@ export default function OrderDetai() {
               <QuotationInfoSection
                 sectionRef={scrollArgs.quotationInfoRef}
                 data={data.quotation}
-                role={auth.role}
+                authorityList={auth.authorityList}
                 status={status}
                 orderId={String(orderId)}
                 scrollPage={() =>
@@ -148,7 +148,7 @@ export default function OrderDetai() {
               <PurchaseOrderInfoSection
                 data={data.purchaseOrder}
                 name={data.customer?.name ?? null}
-                role={auth.role}
+                authorityList={auth.authorityList}
                 status={status}
                 orderId={String(orderId)}
                 minDate={data.quotation?.deliveryDate}
@@ -201,7 +201,7 @@ export default function OrderDetai() {
         {/* 견적 승인하기, 고객이 견적서를 확인하고 클릭 -> 견적 대기 -> 견적 승인 */}
         <OrderDetailBottombar
           showCondition={
-            auth.role === "ROLE_CUSTOMER" &&
+            auth.authorityList.includes("ROLE_CUSTOMER") &&
             status === "견적 대기" &&
             data !== undefined &&
             data.quotation !== null
@@ -213,7 +213,7 @@ export default function OrderDetai() {
         {/* 발주 승인하기, 회사가 발주서를 확인하고 클릭 -> 견적 승인 -> 제작 중 */}
         <OrderDetailBottombar
           showCondition={
-            auth.role === "ROLE_FACTORY" &&
+            auth.authorityList.includes("ROLE_CUSTOMER") &&
             status === "견적 승인" &&
             data !== undefined &&
             data.purchaseOrder !== null
@@ -224,7 +224,7 @@ export default function OrderDetai() {
         />
         {/* 제작 완료, 회사가 제작을 마치고 클릭 -> 제작 중 -> 제작 완료 */}
         <OrderDetailBottombar
-          showCondition={auth.role === "ROLE_FACTORY" && status === "제작 중"}
+          showCondition={auth.authorityList.includes("ROLE_CUSTOMER") && status === "제작 중"}
           announce="제작이 완료됐나요?"
           buttonText="제작 완료"
           onButton={() => acceptPrdouction(String(orderId))}
@@ -232,7 +232,7 @@ export default function OrderDetai() {
         {/* 배송 완료, 고객이 배송을 받았다면 클릭 -> 제작 완료 -> 거래 완료 */}
         <OrderDetailBottombar
           showCondition={
-            auth.role === "ROLE_FACTORY" && status === "제작 완료" && !sendMail
+            auth.authorityList.includes("ROLE_CUSTOMER") && status === "제작 완료" && !sendMail
           }
           announce="인수자 서명 링크를 메일로 보낼까요?"
           buttonText="메일 전송"

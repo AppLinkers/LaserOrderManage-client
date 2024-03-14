@@ -1,11 +1,11 @@
-import { UserType } from "@/src/lib/apis/user/User.types";
+import { UserAuthority } from "@/src/lib/apis/user/User.types";
 import { jsx } from "@emotion/react";
 
 export type IMyPageMenu = "Account" | "Delivery" | "MangerList";
 
 export interface IMyPageMenuProps {
   currentPage: IMyPageMenu;
-  role: UserType;
+  authorityList: UserAuthority[];
   onChangePage: (page: IMyPageMenu) => void;
 }
 

@@ -17,12 +17,12 @@ export const setCredentials = (token: IToken) => {
   setCookie("accessToken", token.accessToken, {
     maxAge: token.accessTokenExpirationTime / 1000,
   });
-  setCookie("role", token.role);
+  setCookie("authorityList", token.authorityList);
 };
 
 export const resetCredentials = () => {
   axiosPrivate.defaults.headers.common["Authorization"] = "";
   deleteCookie("refreshToken");
   deleteCookie("accessToken");
-  deleteCookie("role");
+  deleteCookie("authorityList");
 };

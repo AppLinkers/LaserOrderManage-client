@@ -12,7 +12,7 @@ import OrderDetailBottombar from "../bottombar/OrderDetailBottombar.index";
 export default function PurchaseOrderInfoSection({
   data,
   name,
-  role,
+  authorityList,
   status,
   orderId,
   minDate,
@@ -31,7 +31,7 @@ export default function PurchaseOrderInfoSection({
       <S.Wrapper>
         <S.TitleWrapper className="flex-row-between">
           <S.Title className="bold18">발주서</S.Title>
-          {role === "ROLE_CUSTOMER" && status === "견적 승인" && (
+          {authorityList.includes("ROLE_CUSTOMER") && status === "견적 승인" && (
             <S.EditBox className="flex-row" onClick={() => setShowModal(true)}>
               <EditIcon size={20} />
               <Spacer width="5px" height="100%" />
@@ -44,7 +44,7 @@ export default function PurchaseOrderInfoSection({
         <S.Section className="flex-row">
           {purchaseOrder === null ? (
             <EmptyPurchaseOrder className="regular16 flex-center">
-              {role === "ROLE_CUSTOMER" && status === "견적 승인"
+              {authorityList.includes("ROLE_CUSTOMER") && status === "견적 승인"
                 ? "발주서를 추가해주세요"
                 : "아직 발주서가 등록되지 않았어요"}
             </EmptyPurchaseOrder>
@@ -102,7 +102,7 @@ export default function PurchaseOrderInfoSection({
       />
       <OrderDetailBottombar
         showCondition={
-          role === "ROLE_CUSTOMER" &&
+          authorityList.includes("ROLE_CUSTOMER") &&
           status === "견적 승인" &&
           purchaseOrder === null
         }

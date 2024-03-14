@@ -13,7 +13,7 @@ import { setSsrAxiosHeader } from "@/src/lib/utils/setSsrAxiosHeader";
 import { CustomerApi } from "@/src/lib/apis/user/customer/CustomerApi";
 import { FactoryApi } from "@/src/lib/apis/user/factory/FactoryApi";
 import { AppPages } from "@/src/lib/constants/appPages";
-import { UserType } from "@/src/lib/apis/user/User.types";
+import { UserAuthority } from "@/src/lib/apis/user/User.types";
 import KumohHead from "../../shared/layout/head/NextHead.index";
 
 export default function MyPage() {
@@ -32,10 +32,10 @@ export default function MyPage() {
       <Wrapper className="flex-row">
         <MyPageMenu
           currentPage={currentPage}
-          role={auth.role}
+          authorityList={auth.authorityList}
           onChangePage={onChangePage}
         />
-        {currentPage === "Account" && <AccountPage role={auth.role} />}
+        {currentPage === "Account" && <AccountPage authorityList={auth.authorityList} />}
         {currentPage === "Delivery" && <DeliveryPage />}
         {currentPage === "MangerList" && <ManagerListPage />}
       </Wrapper>
@@ -46,10 +46,10 @@ export default function MyPage() {
 export const getServerSideProps: GetServerSideProps = async (context) => {
   const queryClient = new QueryClient();
   const { cookies } = context.req;
-  const role = cookies.role as UserType;
+  const authorityList = JSON.parse(cookies.authorityList!) as UserAuthority[];
 
   setSsrAxiosHeader(cookies);
-  if (role === "ROLE_CUSTOMER") {
+  if (authorityList.includes("ROLE_CUSTOMER")) {
     await queryClient.prefetchQuery({
       queryKey: ["customerAccount"],
       queryFn: () => CustomerApi.GET_ACCOUNT_INFO(),
@@ -71,7 +71,7 @@ export const getServerSideProps: GetServerSideProps = async (context) => {
     }
   }
 
-  if (role === "ROLE_FACTORY") {
+  if (authorityList.includes("ROLE_FACTORY")) {
     await queryClient.prefetchQuery({
       queryKey: ["factoryAccount"],
       queryFn: () => FactoryApi.GET_ACCOUNT_INFO(),

@@ -16,7 +16,7 @@ import { AppPages } from "@/src/lib/constants/appPages";
 
 export default function MyPageMenu({
   currentPage,
-  role,
+  authorityList,
   onChangePage,
 }: IMyPageMenuProps) {
   const myInfo = useRecoilValue(myInfoState);
@@ -47,7 +47,7 @@ export default function MyPageMenu({
           >
             <UserIcon size={24} isActive={currentPage === "Account"} />
           </MyPageMenuItem>
-          {role === "ROLE_CUSTOMER" && (
+          {authorityList.includes("ROLE_CUSTOMER") && (
             <MyPageMenuItem
               title="배송지"
               isActive={currentPage === "Delivery"}
@@ -56,7 +56,7 @@ export default function MyPageMenu({
               <TruckIcon size={24} isActive={currentPage === "Delivery"} />
             </MyPageMenuItem>
           )}
-          {role === "ROLE_FACTORY" && (
+          {authorityList.includes("ROLE_FACTORY") && (
             <MyPageMenuItem
               title="담당자 관리"
               isActive={currentPage === "MangerList"}

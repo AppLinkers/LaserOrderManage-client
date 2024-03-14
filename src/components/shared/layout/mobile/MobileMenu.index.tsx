@@ -61,7 +61,7 @@ export default function MobileMenu({ show, auth, onClose }: IMobileMenu) {
                 {el.name}
               </MenuItem>
             ))}
-          {auth.role === "ROLE_CUSTOMER" &&
+          {auth.authorityList.includes("ROLE_CUSTOMER") &&
             CUSTOMER_MENU.map((el) => (
               <MenuItem
                 className="bold32"
@@ -71,7 +71,7 @@ export default function MobileMenu({ show, auth, onClose }: IMobileMenu) {
                 {el.name}
               </MenuItem>
             ))}
-          {auth.role === "ROLE_FACTORY" &&
+          {auth.authorityList.includes("ROLE_FACTORY") &&
             FACTORY_MENU.map((el) => (
               <MenuItem
                 className="bold32"

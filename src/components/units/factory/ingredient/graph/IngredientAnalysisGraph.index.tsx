@@ -1,4 +1,4 @@
-import { IIngredientGraphItemListResponse, Item } from "@/src/lib/apis/ingredient/Ingredient.types"
+import { Item } from "@/src/lib/apis/ingredient/Ingredient.types"
 import * as S from "./IngredientAnalysisGraph.styles"
 import { getMonthList, getYearList } from "@/src/lib/utils/utils"
 import { GRAPH_BACKGROUND_COLORS, GRAPH_COLORS } from "@/src/lib/constants/constant"

@@ -1,6 +1,6 @@
 import { IBaseListSimpleResponse } from "@/src/lib/apis/base/base.types";
 
-export type UserType = "ROLE_CUSTOMER" | "ROLE_FACTORY" | null;
+export type UserAuthority = "ROLE_CUSTOMER" | "ROLE_FACTORY" | "AUTHORITY_ADMIN" | null;
 
 export type ILoginRequest = {
   email: string;
@@ -8,7 +8,7 @@ export type ILoginRequest = {
 };
 
 export type IToken = {
-  role: UserType;
+  authorityList: UserAuthority[];
   grantType: string;
   accessToken: string;
   accessTokenExpirationTime: number;

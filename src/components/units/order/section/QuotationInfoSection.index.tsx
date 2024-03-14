@@ -12,7 +12,7 @@ import OrderDetailBottombar from "../bottombar/OrderDetailBottombar.index";
 export default function QuotationInfoSection({
   sectionRef,
   data,
-  role,
+  authorityList,
   status,
   orderId,
   scrollPage,
@@ -29,7 +29,7 @@ export default function QuotationInfoSection({
       <S.Wrapper ref={sectionRef}>
         <S.TitleWrapper className="flex-row-between">
           <S.Title className="bold18">견적서</S.Title>
-          {role === "ROLE_FACTORY" && status === "견적 대기" && (
+          {authorityList.includes("ROLE_FACTORY") && status === "견적 대기" && (
             <S.EditBox className="flex-row" onClick={() => setShowModal(true)}>
               <EditIcon size={20} />
               <Spacer width="5px" height="100%" />
@@ -42,7 +42,7 @@ export default function QuotationInfoSection({
         <S.Section className="flex-row">
           {quotation === null ? (
             <EmptyQuotation className="regular16 flex-center">
-              {role === "ROLE_FACTORY" && status === "견적 대기"
+              {authorityList.includes("ROLE_FACTORY") && status === "견적 대기"
                 ? "견적서를 추가해주세요"
                 : "아직 견적서가 등록되지 않았어요"}
             </EmptyQuotation>
@@ -89,7 +89,7 @@ export default function QuotationInfoSection({
       />
       <OrderDetailBottombar
         showCondition={
-          role === "ROLE_FACTORY" &&
+          authorityList.includes("ROLE_FACTORY") &&
           status === "견적 대기" &&
           quotation === null
         }

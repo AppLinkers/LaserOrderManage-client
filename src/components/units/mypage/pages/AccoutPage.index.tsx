@@ -28,7 +28,7 @@ import {
 } from "@/src/lib/apis/user/factory/Factory.types";
 import WithDrawModal from "@/src/components/commons/modal/mypage/WithDrawModal.index";
 
-export default function AccountPage({ role }: IAccoutPageProps) {
+export default function AccountPage({ authorityList }: IAccoutPageProps) {
   const nameArgs = useInputWithMaxLength(10);
   const [phone, onChangePhone, setPhone] = useInputWithRegex(numberRegex, "");
   const [zoneCode, setZoneCode] = useState("");
@@ -50,7 +50,7 @@ export default function AccountPage({ role }: IAccoutPageProps) {
   } = useQuery({
     queryKey: ["customerAccount"],
     queryFn: () => CustomerApi.GET_ACCOUNT_INFO(),
-    enabled: role === "ROLE_CUSTOMER",
+    enabled: authorityList.includes("ROLE_CUSTOMER"),
   });
 
   useEffect(() => {
@@ -76,7 +76,7 @@ export default function AccountPage({ role }: IAccoutPageProps) {
   } = useQuery({
     queryKey: ["factoryAccount"],
     queryFn: () => FactoryApi.GET_ACCOUNT_INFO(),
-    enabled: role === "ROLE_FACTORY",
+    enabled: authorityList.includes("ROLE_FACTORY"),
   });
 
   useEffect(() => {
@@ -212,7 +212,7 @@ export default function AccountPage({ role }: IAccoutPageProps) {
     address: string,
     detailAddress: string,
   ) => {
-    if (role === "ROLE_CUSTOMER") {
+    if (authorityList.includes("ROLE_CUSTOMER")) {
       const user: ICustomerUser = {
         phone: phone.trim(),
         zipCode: zoneCode,
@@ -221,7 +221,7 @@ export default function AccountPage({ role }: IAccoutPageProps) {
       };
       onEditCustomerAccount("주소", user);
     }
-    if (role === "ROLE_FACTORY") {
+    if (authorityList.includes("ROLE_FACTORY")) {
       const user: IFactoryUser = {
         phone: phone.trim(),
         zipCode: zoneCode,
@@ -264,14 +264,14 @@ export default function AccountPage({ role }: IAccoutPageProps) {
         <S.BodyWrapper>
           <div className="flex-row">
             <S.InfoWrapper>
-              {role === "ROLE_CUSTOMER" && customerAccount && (
+              {authorityList.includes("ROLE_CUSTOMER") && customerAccount && (
                 <InfoInputItem
                   label="이메일"
                   value={customerAccount.email}
                   needEdit={false}
                 />
               )}
-              {role === "ROLE_FACTORY" && factoryAccount && (
+              {authorityList.includes("ROLE_FACTORY") && factoryAccount && (
                 <InfoInputItem
                   label="이메일"
                   value={factoryAccount.email}
@@ -291,7 +291,7 @@ export default function AccountPage({ role }: IAccoutPageProps) {
             </S.InfoWrapper>
           </div>
           <Spacer width="100%" height="20px" />
-          {role === "ROLE_CUSTOMER" && (
+          {authorityList.includes("ROLE_CUSTOMER") && (
             <S.InfosWrapper>
               <S.InfoTitle className="medium16">기본 정보</S.InfoTitle>
               <Spacer width="100%" height="24px" />
@@ -331,7 +331,7 @@ export default function AccountPage({ role }: IAccoutPageProps) {
               />
             </S.InfosWrapper>
           )}
-          {role === "ROLE_FACTORY" && (
+          {authorityList.includes("ROLE_FACTORY") && (
             <S.InfosWrapper>
               <S.InfoTitle className="medium16">기본 정보</S.InfoTitle>
               <Spacer width="100%" height="24px" />
@@ -398,7 +398,7 @@ export default function AccountPage({ role }: IAccoutPageProps) {
               <S.Switch isActive={notify}></S.Switch>
             </S.SwitchWrapper>
           </S.InfoWrapper>
-          {role === "ROLE_CUSTOMER" && (
+          {authorityList.includes("ROLE_CUSTOMER") && (
             <>
               <Spacer width="100%" height="20px" />
               <S.InfoWrapper className="flex-row-between-center">

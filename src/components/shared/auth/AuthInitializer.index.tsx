@@ -1,5 +1,5 @@
 import { axiosPrivate } from "@/src/lib/apis/axios";
-import { UserType } from "@/src/lib/apis/user/User.types";
+import { UserAuthority } from "@/src/lib/apis/user/User.types";
 import { authState } from "@/src/store/auth";
 import { getCookie } from "cookies-next";
 import { useEffect } from "react";
@@ -14,15 +14,15 @@ export default function AuthInitializer({ children }: IAuthInitializerProps) {
 
   useEffect(() => {
     const accessToken = getCookie("accessToken");
-    const role = getCookie("role");
-    if (accessToken && role) {
+    const authorityList = getCookie("authorityList");
+    if (accessToken && authorityList) {
       axiosPrivate.defaults.headers.common[
         "Authorization"
       ] = `Bearer ${accessToken}`;
       setAuth({
         isAuthenticated: true,
         accessToken: accessToken,
-        role: role as UserType,
+        authorityList: JSON.parse(authorityList) as UserAuthority[],
       });
     }
   }, [setAuth]);

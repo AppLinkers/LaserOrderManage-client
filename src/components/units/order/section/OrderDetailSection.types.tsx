@@ -7,12 +7,12 @@ import {
   IDetailPurchaseOrder,
   IDetailQuotation,
 } from "@/src/lib/apis/order/detail/OrderDetail.types";
-import { UserType } from "@/src/lib/apis/user/User.types";
+import { UserAuthority } from "@/src/lib/apis/user/User.types";
 import { IDeliveryAddress } from "@/src/lib/apis/user/customer/Customer.types";
 import { RefObject } from "react";
 
 interface IDetailSectionProps {
-  role: UserType;
+  authorityList: UserAuthority[];
   status: OrderStatus | undefined;
   orderId: string;
 }
@@ -44,7 +44,7 @@ export interface IDrawingInfoSectionProps extends IDetailSectionProps {
 }
 
 export interface IDrawingInfoItemProps {
-  role: UserType;
+  authorityList: UserAuthority[];
   status: OrderStatus | undefined;
   data: IDetailDrawing;
   onEditDrawing: () => void;

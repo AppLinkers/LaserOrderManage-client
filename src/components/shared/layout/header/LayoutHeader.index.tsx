@@ -37,19 +37,19 @@ export default function LayoutHeader({ transparent }: ILayoutHeaderProps) {
             className="flex-row-align-center"
             transparent={transparent}
           >
-            {auth.role === null &&
+            {auth.authorityList.length === 0 &&
               NAVIGATION_DEFAULT_MENU.map((el) => (
                 <Link href={AppPages.LOGIN} key={el.page} className="bold18">
                   {el.name}
                 </Link>
               ))}
-            {auth.role === "ROLE_CUSTOMER" &&
+            {auth.authorityList.includes("ROLE_CUSTOMER") &&
               NAVIGATION_DEFAULT_MENU.map((el) => (
                 <Link href={el.page} key={el.page} className="bold18">
                   {el.name}
                 </Link>
               ))}
-            {auth.role === "ROLE_FACTORY" &&
+            {auth.authorityList.includes("ROLE_FACTORY") &&
               NAVIGATION_FACTORY_MENU.map((el) => (
                 <Link href={el.page} key={el.page} className="bold18">
                   {el.name}
