@@ -15,6 +15,7 @@ import { FactoryApi } from "@/src/lib/apis/user/factory/FactoryApi";
 import { AppPages } from "@/src/lib/constants/appPages";
 import { UserAuthority } from "@/src/lib/apis/user/User.types";
 import KumohHead from "../../shared/layout/head/NextHead.index";
+import { UserApi } from "@/src/lib/apis/user/UserApi";
 
 export default function MyPage() {
   const [currentPage, setCurrentPage] = useState<IMyPageMenu>("Account");
@@ -49,6 +50,22 @@ export const getServerSideProps: GetServerSideProps = async (context) => {
   const authorityList = JSON.parse(cookies.authorityList!) as UserAuthority[];
 
   setSsrAxiosHeader(cookies);
+  await queryClient.prefetchQuery({
+    queryKey: ["userAccount"],
+    queryFn: () => UserApi.GET_ACCOUNT_INFO(),
+  });
+  const queryState = queryClient.getQueryState(["userAccount"]);
+    if (queryState?.status === "error") {
+      return {
+        redirect: {
+          destination: `${AppPages.LOGIN}?redirect=${encodeURIComponent(
+            context.resolvedUrl,
+          )}`,
+          permanent: false,
+        },
+      };
+    }
+    
   if (authorityList.includes("ROLE_CUSTOMER")) {
     await queryClient.prefetchQuery({
       queryKey: ["customerAccount"],

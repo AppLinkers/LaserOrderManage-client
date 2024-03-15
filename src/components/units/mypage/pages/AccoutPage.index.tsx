@@ -18,15 +18,13 @@ import { useSetRecoilState } from "recoil";
 import { myInfoState } from "@/src/store/myInfo";
 import { UserApi } from "@/src/lib/apis/user/UserApi";
 import { useToastify } from "@/src/lib/hooks/useToastify";
+import { IEditCustomerAccountRequest } from "@/src/lib/apis/user/customer/Customer.types";
 import {
-  ICustomerUser,
-  IEditCustomerAccountRequest,
-} from "@/src/lib/apis/user/customer/Customer.types";
-import {
-  IEditFactoryRequest,
+  IEditFactoryAccountRequest,
   IFactoryUser,
 } from "@/src/lib/apis/user/factory/Factory.types";
 import WithDrawModal from "@/src/components/commons/modal/mypage/WithDrawModal.index";
+import { IAccountRequest } from "@/src/lib/apis/user/User.types";
 
 export default function AccountPage({ authorityList }: IAccoutPageProps) {
   const nameArgs = useInputWithMaxLength(10);
@@ -35,6 +33,7 @@ export default function AccountPage({ authorityList }: IAccoutPageProps) {
   const [address, setAddress] = useState("");
   const [detailAddress, setDetailAddress] = useState("");
   const companyArgs = useInputWithMaxLength(20);
+  const representativeArgs = useInputWithMaxLength(10);
   const [fax, onChangeFax, setFax] = useInputWithRegex(numberRegex, "");
   const [notify, setNotify] = useState(false);
   const setMyInfo = useSetRecoilState(myInfoState);
@@ -42,6 +41,26 @@ export default function AccountPage({ authorityList }: IAccoutPageProps) {
   const [showPasswordModal, setShowPasswordModal] = useState(false);
   const [showAddressModal, setShowAddressModal] = useState(false);
   const [showWithDrawModal, setShowWithDrawModal] = useState(false);
+
+  const {
+    data: userAccount,
+    isFetching: userFetching,
+    refetch: userRefetch,
+  } = useQuery({
+    queryKey: ["userAccount"],
+    queryFn: () => UserApi.GET_ACCOUNT_INFO(),
+  });
+
+  useEffect(() => {
+    if (userAccount) {
+      nameArgs.setValue(userAccount.name);
+      setPhone(userAccount.phone);
+      setZoneCode(userAccount.zipCode);
+      setAddress(userAccount.address);
+      setDetailAddress(userAccount.detailAddress ?? "");
+      setNotify(userAccount.emailNotification);
+    }
+  }, [userAccount, userFetching])
 
   const {
     data: customerAccount,
@@ -54,16 +73,10 @@ export default function AccountPage({ authorityList }: IAccoutPageProps) {
   });
 
   useEffect(() => {
-    if (customerAccount) {
-      nameArgs.setValue(customerAccount.name);
-      setPhone(customerAccount.phone);
-      setZoneCode(customerAccount.zipCode);
-      setAddress(customerAccount.address);
-      setDetailAddress(customerAccount.detailAddress ?? "");
+    if (userAccount && customerAccount) {
       companyArgs.setValue(customerAccount.companyName ?? "");
-      setNotify(customerAccount.emailNotification);
       setMyInfo({
-        name: customerAccount.name,
+        name: userAccount.name,
         company: customerAccount.companyName,
       });
     }
@@ -80,37 +93,76 @@ export default function AccountPage({ authorityList }: IAccoutPageProps) {
   });
 
   useEffect(() => {
-    if (factoryAccount) {
+    if (userAccount && factoryAccount) {
       companyArgs.setValue(factoryAccount.companyName);
-      nameArgs.setValue(factoryAccount.representative);
-      setPhone(factoryAccount.phone);
+      representativeArgs.setValue(factoryAccount.representative);
       setFax(factoryAccount.fax);
-      setZoneCode(factoryAccount.zipCode);
-      setAddress(factoryAccount.address);
-      setDetailAddress(factoryAccount.detailAddress ?? "");
-      setNotify(factoryAccount.emailNotification);
       setMyInfo({
-        name: "관리자",
+        name: userAccount.name,
         company: factoryAccount.companyName,
       });
     }
   }, [factoryAccount, factoryFetching]);
 
-  const { mutate: patchCustomerAccount } = useMutation({
-    mutationFn: CustomerApi.EDIT_ACCOUNT_INFO,
+  const { mutate: patchUserAccount } = useMutation({
+    mutationFn: UserApi.EDIT_ACCOUNT_INFO,
   });
 
-  const onEditCustomerAccount = (label: string, user?: ICustomerUser) => {
-    const customerUser: ICustomerUser = {
+  const onEditUserAccount = (label: string, user?: IAccountRequest) => {
+    console.log(user);
+    const payload: IAccountRequest = user ?? {
+      name: nameArgs.value.trim(),
       phone: phone.trim(),
       zipCode: zoneCode,
       address: address,
       detailAddress: detailAddress.trim() !== "" ? detailAddress.trim() : null,
     };
+
+    const diffCnt = countDiffUserAccount(payload);
+    if (diffCnt === 0) return;
+    patchUserAccount(payload, {
+      onSuccess: () => {
+        setToast({
+          comment:
+            diffCnt > 1
+              ? `${label} 외 ${diffCnt - 1}개를 변경했어요`
+              : `${label}을 변경했어요`,
+        });
+        userRefetch();
+      },
+      onError: () => {
+        setToast({
+          comment:
+            diffCnt > 1
+              ? `${label} 외 ${diffCnt - 1}개 변경에 실패했어요`
+              : `${label} 변경에 실패했어요`,
+        });
+        userRefetch();
+      },
+    });
+  }
+
+  const countDiffUserAccount = (payload: IAccountRequest) => {
+    let count = 0;
+    const account = userAccount!!;
+    if (account.name !== payload.name) count++;
+    if (account.phone !== payload.phone) count++;
+    if (
+      account.zipCode !== payload.zipCode ||
+      account.address !== payload.address ||
+      account.detailAddress !== payload.detailAddress
+    )
+      count++;
+    return count;
+  };
+
+  const { mutate: patchCustomerAccount } = useMutation({
+    mutationFn: CustomerApi.EDIT_ACCOUNT_INFO,
+  });
+
+  const onEditCustomerAccount = (label: string) => {
     const payload: IEditCustomerAccountRequest = {
-      name: nameArgs.value.trim(),
       companyName: companyArgs.value.trim(),
-      user: user ?? customerUser,
     };
     const diffCnt = countDiffCustomerAccount(payload);
     if (diffCnt === 0) return;
@@ -139,15 +191,7 @@ export default function AccountPage({ authorityList }: IAccoutPageProps) {
   const countDiffCustomerAccount = (payload: IEditCustomerAccountRequest) => {
     let count = 0;
     const account = customerAccount!!;
-    if (account.name !== payload.name) count++;
     if (account.companyName !== payload.companyName) count++;
-    if (account.phone !== payload.user.phone) count++;
-    if (
-      account.zipCode !== payload.user.zipCode ||
-      account.address !== payload.user.address ||
-      account.detailAddress !== payload.user.detailAddress
-    )
-      count++;
     return count;
   };
 
@@ -155,18 +199,11 @@ export default function AccountPage({ authorityList }: IAccoutPageProps) {
     mutationFn: FactoryApi.EDIT_ACCOUNT_INFO,
   });
 
-  const onEditFactoryAccount = (label: string, user?: IFactoryUser) => {
-    const factoryUser: IFactoryUser = {
-      phone: phone.trim(),
-      zipCode: zoneCode,
-      address: address,
-      detailAddress: detailAddress !== "" ? detailAddress.trim() : null,
-    };
-    const payload: IEditFactoryRequest = {
+  const onEditFactoryAccount = (label: string) => {
+    const payload: IEditFactoryAccountRequest = {
       companyName: companyArgs.value.trim(),
-      representative: nameArgs.value.trim(),
+      representative: representativeArgs.value.trim(),
       fax: fax.trim(),
-      user: user ?? factoryUser,
     };
     const diffCnt = countDiffFactoryAccount(payload);
     if (diffCnt === 0) return;
@@ -192,18 +229,12 @@ export default function AccountPage({ authorityList }: IAccoutPageProps) {
     });
   };
 
-  const countDiffFactoryAccount = (payload: IEditFactoryRequest) => {
+  const countDiffFactoryAccount = (payload: IEditFactoryAccountRequest) => {
     let count = 0;
     const account = factoryAccount!!;
     if (account.companyName !== payload.companyName) count++;
     if (account.representative !== payload.representative) count++;
     if (account.fax !== payload.fax) count++;
-    if (
-      account.zipCode !== payload.user.zipCode ||
-      account.address !== payload.user.address ||
-      account.detailAddress !== payload.user.detailAddress
-    )
-      count++;
     return count;
   };
 
@@ -212,24 +243,14 @@ export default function AccountPage({ authorityList }: IAccoutPageProps) {
     address: string,
     detailAddress: string,
   ) => {
-    if (authorityList.includes("ROLE_CUSTOMER")) {
-      const user: ICustomerUser = {
-        phone: phone.trim(),
-        zipCode: zoneCode,
-        address: address,
-        detailAddress: detailAddress !== "" ? detailAddress.trim() : null,
-      };
-      onEditCustomerAccount("주소", user);
+    const user: IAccountRequest = {
+      name: nameArgs.value.trim(),
+      phone: phone.trim(),
+      zipCode: zoneCode,
+      address: address,
+      detailAddress: detailAddress !== "" ? detailAddress.trim() : null,
     }
-    if (authorityList.includes("ROLE_FACTORY")) {
-      const user: IFactoryUser = {
-        phone: phone.trim(),
-        zipCode: zoneCode,
-        address: address,
-        detailAddress: detailAddress !== "" ? detailAddress.trim() : null,
-      };
-      onEditFactoryAccount("주소", user);
-    }
+    onEditUserAccount("주소", user)
   };
 
   const [patchNotifySending, setPatchNotifySending] = useState(false);
@@ -264,19 +285,12 @@ export default function AccountPage({ authorityList }: IAccoutPageProps) {
         <S.BodyWrapper>
           <div className="flex-row">
             <S.InfoWrapper>
-              {authorityList.includes("ROLE_CUSTOMER") && customerAccount && (
+              {userAccount && (
                 <InfoInputItem
-                  label="이메일"
-                  value={customerAccount.email}
-                  needEdit={false}
-                />
-              )}
-              {authorityList.includes("ROLE_FACTORY") && factoryAccount && (
-                <InfoInputItem
-                  label="이메일"
-                  value={factoryAccount.email}
-                  needEdit={false}
-                />
+                label="이메일"
+                value={userAccount.email}
+                needEdit={false}
+              />
               )}
             </S.InfoWrapper>
             <Spacer width="20px" height="100%" />
@@ -291,8 +305,7 @@ export default function AccountPage({ authorityList }: IAccoutPageProps) {
             </S.InfoWrapper>
           </div>
           <Spacer width="100%" height="20px" />
-          {authorityList.includes("ROLE_CUSTOMER") && (
-            <S.InfosWrapper>
+          <S.InfosWrapper>
               <S.InfoTitle className="medium16">기본 정보</S.InfoTitle>
               <Spacer width="100%" height="24px" />
               <InfoInputItem
@@ -301,7 +314,7 @@ export default function AccountPage({ authorityList }: IAccoutPageProps) {
                 needEdit={true}
                 placeHolder="이름을 입력하세요"
                 onChange={nameArgs.onChange}
-                onSubmit={() => onEditCustomerAccount("이름")}
+                onSubmit={() => onEditUserAccount("이름")}
               />
               <Spacer width="100%" height="24px" />
               <InfoInputItem
@@ -311,7 +324,7 @@ export default function AccountPage({ authorityList }: IAccoutPageProps) {
                 maxLength={11}
                 placeHolder="휴대폰 번호를 입력하세요"
                 onChange={onChangePhone}
-                onSubmit={() => onEditCustomerAccount("휴대폰 번호")}
+                onSubmit={() => onEditUserAccount("휴대폰 번호")}
               />
               <Spacer width="100%" height="24px" />
               <InfoInputItem
@@ -320,6 +333,12 @@ export default function AccountPage({ authorityList }: IAccoutPageProps) {
                 needEdit={true}
                 onEdit={() => setShowAddressModal(true)}
               />
+              <Spacer width="100%" height="24px" />
+            </S.InfosWrapper>
+          <Spacer width="100%" height="20px" />
+          {authorityList.includes("ROLE_CUSTOMER") && (
+            <S.InfosWrapper>
+              <S.InfoTitle className="medium16">고객 정보</S.InfoTitle>
               <Spacer width="100%" height="24px" />
               <InfoInputItem
                 label="업체명"
@@ -333,12 +352,12 @@ export default function AccountPage({ authorityList }: IAccoutPageProps) {
           )}
           {authorityList.includes("ROLE_FACTORY") && (
             <S.InfosWrapper>
-              <S.InfoTitle className="medium16">기본 정보</S.InfoTitle>
+              <S.InfoTitle className="medium16">공장 정보</S.InfoTitle>
               <Spacer width="100%" height="24px" />
               <InfoInputItem
                 label="상호"
                 value={companyArgs.value}
-                needEdit={true}
+                needEdit={authorityList.includes("AUTHORITY_ADMIN")}
                 placeHolder="상호를 입력하세요"
                 onChange={companyArgs.onChange}
                 onSubmit={() => onEditFactoryAccount("상호")}
@@ -346,38 +365,21 @@ export default function AccountPage({ authorityList }: IAccoutPageProps) {
               <Spacer width="100%" height="24px" />
               <InfoInputItem
                 label="대표자 이름"
-                value={nameArgs.value}
-                needEdit={true}
+                value={representativeArgs.value}
+                needEdit={authorityList.includes("AUTHORITY_ADMIN")}
                 placeHolder="대표자 이름을 입력하세요"
-                onChange={nameArgs.onChange}
+                onChange={representativeArgs.onChange}
                 onSubmit={() => onEditFactoryAccount("대표자 이름")}
-              />
-              <Spacer width="100%" height="24px" />
-              <InfoInputItem
-                label="대표자 번호"
-                value={phone}
-                needEdit={true}
-                maxLength={11}
-                placeHolder="대표자 번호를 입력하세요"
-                onChange={onChangePhone}
-                onSubmit={() => onEditFactoryAccount("대표자 번호")}
               />
               <Spacer width="100%" height="24px" />
               <InfoInputItem
                 label="FAX 번호"
                 value={fax}
-                needEdit={true}
+                needEdit={authorityList.includes("AUTHORITY_ADMIN")}
                 maxLength={11}
                 placeHolder="FAX 번호를 입력하세요"
                 onChange={onChangeFax}
                 onSubmit={() => onEditFactoryAccount("FAX 번호")}
-              />
-              <Spacer width="100%" height="24px" />
-              <InfoInputItem
-                label="주소"
-                value={getFullAddress(zoneCode, address, detailAddress)}
-                needEdit={true}
-                onEdit={() => setShowAddressModal(true)}
               />
             </S.InfosWrapper>
           )}

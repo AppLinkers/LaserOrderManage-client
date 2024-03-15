@@ -27,25 +27,9 @@ export type IDeliveryAddress = {
 };
 
 export type ICustomerAccountResponse = {
-  email: string;
-  name: string;
-  phone: string;
-  zipCode: string;
-  address: string;
-  detailAddress: string | null;
   companyName: string | null;
-  emailNotification: boolean;
-};
-
-export type ICustomerUser = {
-  phone: string;
-  zipCode: string;
-  address: string;
-  detailAddress: string | null;
 };
 
 export type IEditCustomerAccountRequest = {
-  name: string;
   companyName: string | null;
-  user: ICustomerUser;
 };

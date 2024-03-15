@@ -73,3 +73,21 @@ export type IFindPasswordRequest = {
 export type IEditPasswordRequest = {
   password: string;
 };
+
+export type IAccountResponse = {
+  email: string;
+  name: string;
+  phone: string;
+  zipCode: string;
+  address: string;
+  detailAddress: string | null;
+  emailNotification: boolean;
+}
+
+export type IAccountRequest = {
+  name: string;
+  phone: string;
+  zipCode: string;
+  address: string;
+  detailAddress: string | null;
+}

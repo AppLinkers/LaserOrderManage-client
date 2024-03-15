@@ -1,15 +1,15 @@
 import { IBaseListSimpleResponse } from "@/src/lib/apis/base/base.types";
 
-export type IFactoryResponse = {
-  email: string;
+export type IFactoryAccountResponse = {
   companyName: string;
   representative: string;
-  phone: string;
   fax: string;
-  zipCode: string;
-  address: string;
-  detailAddress: string | null;
-  emailNotification: boolean;
+};
+
+export type IEditFactoryAccountRequest = {
+  companyName: string;
+  representative: string;
+  fax: string;
 };
 
 export type IFactoryUser = {
@@ -17,13 +17,6 @@ export type IFactoryUser = {
   zipCode: string;
   address: string;
   detailAddress: string | null;
-};
-
-export type IEditFactoryRequest = {
-  companyName: string;
-  representative: string;
-  fax: string;
-  user: IFactoryUser;
 };
 
 export type IOrderManager = {
