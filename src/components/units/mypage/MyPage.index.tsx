@@ -6,7 +6,6 @@ import { useRecoilValue } from "recoil";
 import { authState } from "@/src/store/auth";
 import AccountPage from "./pages/AccoutPage.index";
 import DeliveryPage from "./pages/DeliveryPage.index";
-import ManagerListPage from "./pages/MangerListPage.index";
 import { GetServerSideProps } from "next";
 import { QueryClient, dehydrate } from "@tanstack/react-query";
 import { setSsrAxiosHeader } from "@/src/lib/utils/setSsrAxiosHeader";
@@ -38,7 +37,6 @@ export default function MyPage() {
         />
         {currentPage === "Account" && <AccountPage authorityList={auth.authorityList} />}
         {currentPage === "Delivery" && <DeliveryPage />}
-        {currentPage === "MangerList" && <ManagerListPage />}
       </Wrapper>
     </>
   );
@@ -92,10 +90,6 @@ export const getServerSideProps: GetServerSideProps = async (context) => {
     await queryClient.prefetchQuery({
       queryKey: ["factoryAccount"],
       queryFn: () => FactoryApi.GET_ACCOUNT_INFO(),
-    });
-    await queryClient.prefetchQuery({
-      queryKey: ["getManagers"],
-      queryFn: () => FactoryApi.GET_ORDER_MANAGER(),
     });
     const queryState = queryClient.getQueryState(["factoryAccount"]);
     if (queryState?.status === "error") {

@@ -1,5 +1,4 @@
 import { useRecoilValue, useResetRecoilState } from "recoil";
-import ClipBoardIcon from "../../icons/ClipBoardIcon.index";
 import SignoutIcon from "../../icons/SignoutIcon.index";
 import TruckIcon from "../../icons/TruckIcon.index";
 import UserIcon from "../../icons/UserIcon.index";
@@ -54,18 +53,6 @@ export default function MyPageMenu({
               onClick={() => onChangePage("Delivery")}
             >
               <TruckIcon size={24} isActive={currentPage === "Delivery"} />
-            </MyPageMenuItem>
-          )}
-          {authorityList.includes("ROLE_FACTORY") && (
-            <MyPageMenuItem
-              title="담당자 관리"
-              isActive={currentPage === "MangerList"}
-              onClick={() => onChangePage("MangerList")}
-            >
-              <ClipBoardIcon
-                size={24}
-                isActive={currentPage === "MangerList"}
-              />
             </MyPageMenuItem>
           )}
         </div>

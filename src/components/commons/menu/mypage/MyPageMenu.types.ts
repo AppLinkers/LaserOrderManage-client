@@ -1,7 +1,7 @@
 import { UserAuthority } from "@/src/lib/apis/user/User.types";
 import { jsx } from "@emotion/react";
 
-export type IMyPageMenu = "Account" | "Delivery" | "MangerList";
+export type IMyPageMenu = "Account" | "Delivery";
 
 export interface IMyPageMenuProps {
   currentPage: IMyPageMenu;
