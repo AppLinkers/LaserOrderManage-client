@@ -51,12 +51,13 @@ export type IIngredientRequest = {
     optimalStock: number | null;
 }
 
-export type IIngredientStatusRequest = {
-    stock: {
-        incoming: number;
-        production: number;
-        currentDay: number;
-    }
+export type IIngredientStockRequest = {
+    incoming: number;
+    production: number;
+    currentDay: number;
+}
+
+export type IIngredientInfoRequest = {
     price: {
         purchase: number;
         sell: number;

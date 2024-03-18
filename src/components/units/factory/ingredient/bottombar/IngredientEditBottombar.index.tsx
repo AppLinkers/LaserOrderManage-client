@@ -1,4 +1,4 @@
-import { IIngredientStatusRequest, Ingredient } from "@/src/lib/apis/ingredient/Ingredient.types";
+import { IIngredientInfoRequest, IIngredientStockRequest, Ingredient } from "@/src/lib/apis/ingredient/Ingredient.types";
 import * as S from "./IngredientBottombar.styles"
 import { IIngredientBottombarProps } from "./IngredientBottombar.types"
 import TrashIcon from "@/src/components/commons/icons/TrashIcon.index";
@@ -43,6 +43,7 @@ export default function IngredientEditBottombar({show, authorityList, ingredient
     const { setToast } = useToastify();
 
     useEffect(() => {
+        refetch();
         setPreviousDayStock(String(ingredient?.stockCount.previousDay ?? 0));
         setIncomingStock(String(ingredient?.stockCount.incoming ?? ""));
         setProductionStock(String(ingredient?.stockCount.production ?? 0));
@@ -105,32 +106,50 @@ export default function IngredientEditBottombar({show, authorityList, ingredient
         setOptimalStock(String(ingredient?.stockCount.optimal ?? ""));
     }
 
-    const { mutate: editMutate } = useMutation({
-        mutationFn: IngredientApi.EDIT_INGREDIENT_STATUS,
+    const { mutate: editIngredientStockMutate } = useMutation({
+        mutationFn: IngredientApi.EDIT_INGREDIENT_STOCK,
         onSuccess: () => {
             refetch();
             onClose();
             setToast({comment: "자재 재고를 수정했어요"});
         },
         onError: () => {
+            refetch();
             setToast({comment: "자재 재고 수정에 실패했어요"});
         },
     });
 
+    const { mutate: editIngredientInfoMutate } = useMutation({
+        mutationFn: IngredientApi.EDIT_INGREDIENT_INFO,
+        onSuccess: () => {
+            refetch();
+            onClose();
+            setToast({comment: "자재 정보를 수정했어요"});
+        },
+        onError: () => {
+            refetch();
+            setToast({comment: "자재 정보 수정에 실패했어요"});
+        },
+    })
+
     const onSubmit = () => {
-        const payload: IIngredientStatusRequest = {
-            stock: {
-                incoming: Number(incomingStock),
-                production: Number(productionStock),
-                currentDay: Number(currentDayStock),
-            },
-            price: {
-                purchase: Number(purchasePrice),
-                sell: Number(sellPrice)
-            },
-            optimalStock: Number(optimalStock)
+        const ingredientStockPayload: IIngredientStockRequest = {
+            incoming: Number(incomingStock),
+            production: Number(productionStock),
+            currentDay: Number(currentDayStock),
         };
-        editMutate({ id: ingredient.id, payload: payload});
+        editIngredientStockMutate({ id: ingredient.id, payload: ingredientStockPayload });
+
+        if (authorityList.includes("AUTHORITY_ADMIN")) {
+            const ingredientInfoPayload: IIngredientInfoRequest = {
+                price: {
+                    purchase: Number(purchasePrice),
+                    sell: Number(sellPrice)
+                },
+                optimalStock: Number(optimalStock)
+            }
+            editIngredientInfoMutate({ id: ingredient.id, payload: ingredientInfoPayload });
+        }
     }
 
     return (

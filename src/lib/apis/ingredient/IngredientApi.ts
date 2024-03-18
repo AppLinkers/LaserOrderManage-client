@@ -1,5 +1,5 @@
 import { axiosPrivate } from "../axios";
-import { IIngredientGraphItemListResponse, IIngredientNameListResponse, IIngredientRequest, IIngredientStatusRequest, IIngredientStatusResponse } from "./Ingredient.types";
+import { IIngredientGraphItemListResponse, IIngredientNameListResponse, IIngredientRequest, IIngredientStockRequest, IIngredientStatusResponse, IIngredientInfoRequest } from "./Ingredient.types";
 
 export const IngredientApi = {
     GET_INGREDIENT_STATUS: async (
@@ -19,12 +19,25 @@ export const IngredientApi = {
         );
         return response.data;
     },
-    EDIT_INGREDIENT_STATUS: async ({
+    EDIT_INGREDIENT_STOCK: async ({
         id,
         payload,
     } : {
         id: number;
-        payload: IIngredientStatusRequest;
+        payload: IIngredientStockRequest;
+    }): Promise<null> => {
+        const response = await axiosPrivate.patch(
+            `/factory/ingredient/${id}/stock`,
+            payload,
+        );
+        return response.data;
+    },
+    EDIT_INGREDIENT_INFO: async ({
+        id,
+        payload,
+    } : {
+        id: number;
+        payload: IIngredientInfoRequest;
     }): Promise<null> => {
         const response = await axiosPrivate.patch(
             `/factory/ingredient/${id}`,
