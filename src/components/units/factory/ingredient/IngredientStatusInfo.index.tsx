@@ -35,7 +35,7 @@ export default function IngredientStatusInfo({
                 </InfoInnerWrapper>
                 <InfoInnerWrapper className="flex-row">
                     <InfoLabel className="medium16">무게</InfoLabel>
-                    <InfoValue className="regular16">{`${weight.toLocaleString("ko-KR")} t`}</InfoValue>
+                    <InfoValue className="regular16">{`${(weight / 1000).toLocaleString("ko-KR")} TON`}</InfoValue>
                 </InfoInnerWrapper>
             </InfoWrapper>
         </Wrapper>

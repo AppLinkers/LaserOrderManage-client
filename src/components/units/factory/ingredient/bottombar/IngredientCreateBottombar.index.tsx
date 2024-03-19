@@ -220,7 +220,7 @@ export default function IngredientCreateBottombar({show, onClose, refetch}: IIng
                                             onBlur={() => setWeightFocus(false)}
                                         />
                                     </S.EditInputWrapper>
-                                    t
+                                    kg
                                 </S.FieldValue>
                             </S.FieldWrapper>
                         </S.InfoInnerWrapper>

@@ -37,6 +37,7 @@ interface IOrderDateType {
 interface IIngredientUnitType {
   type: IngredientUnitType;
   key: string;
+  unit: string;
 }
 
 interface IAnalysisDataType {
@@ -90,8 +91,8 @@ export const ORDER_DATE_TYPE: IOrderDateType[] = [
 ];
 
 export const INGREDIENT_UNIT_TYPE: IIngredientUnitType[] = [
-  { type: "수량", key: "count" },
-  { type: "무게", key: "weight" },
+  { type: "수량", key: "count", unit: "개"},
+  { type: "무게", key: "weight", unit: "kg" },
 ];
 
 export const ANALYSIS_DATA_TYPE: IAnalysisDataType[] = [

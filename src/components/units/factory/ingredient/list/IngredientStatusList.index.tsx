@@ -65,6 +65,8 @@ export default function IngredientStatusList ({authorityList, selectedDate, sele
         return `${parts[0]}년 ${parts[1]}월 ${parts[2]}일`;
     }
 
+    const selectedUnitType = INGREDIENT_UNIT_TYPE.find(el => el.key === selectedUnit);
+
     return (
         <>
             <S.Wrapper>
@@ -92,7 +94,7 @@ export default function IngredientStatusList ({authorityList, selectedDate, sele
                 <th rowSpan={2}>두께</th>
                 <th rowSpan={2}>크기</th>
                 <th rowSpan={2}>무게</th>
-                <th colSpan={5}>{`${dateFormat(selectedDate)} 자재 재고 현황 (${INGREDIENT_UNIT_TYPE.find(el => el.key === selectedUnit)?.type})`}</th>
+                <th colSpan={5}>{`${dateFormat(selectedDate)} 자재 재고 현황 (${selectedUnitType?.type}, ${selectedUnitType?.unit})`}</th>
               </tr>
               <tr>
                 <th>전일 재고</th>
@@ -129,7 +131,7 @@ const IngredientStockItem = ({unit, ingredient, showEditBar} : IIngredientStockI
             <td>{ingredient.texture}</td>
             <td>{`${Number.isInteger(ingredient.thickness) ? ingredient.thickness.toFixed(1) : ingredient.thickness} T`}</td>
             <td>{`${ingredient.width} x ${ingredient.height}`}</td>
-            <td>{`${getNumberSplitFromNumber(ingredient.weight)} t`}</td>
+            <td>{`${getNumberSplitFromNumber(ingredient.weight)} kg`}</td>
             <td>{getNumberSplitFromNumber(unit === "count" ? ingredient.stockCount.previousDay : ingredient.stockWeight.previousDay)}</td>
             <td>{getNumberSplitFromNumber(unit === "count" ? ingredient.stockCount.incoming : ingredient.stockWeight.incoming)}</td>
             <td>{getNumberSplitFromNumber(unit === "count" ? ingredient.stockCount.production : ingredient.stockWeight.production)}</td>
