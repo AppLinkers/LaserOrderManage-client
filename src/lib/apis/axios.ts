@@ -23,6 +23,9 @@ export const axiosPrivate = axios.create({
 });
 
 axiosPrivate.interceptors.request.use((config) => {
+  if (config.url === "/user/re-issue") {
+    return config;
+  }
   const token = getCookie("accessToken");
   if (token) {
     config.headers.Authorization = `Bearer ${token}`;
