@@ -36,7 +36,7 @@ const PORTFOLIO_ITEMS: IPortfolioItem[] = [
     title: "레이저",
     image: "/images/portfolio3.webp",
     contents: [
-      { name: "보유", content: "3대" },
+      { name: "보유", content: "12대" },
       { name: "SS가공", content: "20T" },
       { name: "STS가공", content: "16T" },
       { name: "작업반경", content: "1500 x 3000" },
