@@ -31,13 +31,13 @@ const IntroSection = () => {
             언제나 고객의 소리에 귀기울이며, 고객 만족을 위해 최선을 다하는
             기업이 되겠습니다.
           </Intro>
-          {/* <Button
+          <Button
             className="bold20 flex-center"
             href={PORTFOLIO_LINK}
             target="_blank"
           >
             Portfolio
-          </Button> */}
+          </Button>
         </IntroContent>
       </IntroWapper>
       <IconWrapper className="flex-column-center">
