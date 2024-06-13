@@ -68,9 +68,22 @@ export const LoginButton = styled.button`
   }
 `;
 
+export const SocialLoginButton = styled.button`
+  width: 450px;
+  height: 55px;
+  background-color: var(--color-lightGray);
+  border-radius: var(--border-radius);
+  color: var(--color-darkGray);
+  margin-bottom: 28px;
+  ${media.mobile} {
+    width: 100%;
+  }
+`;
+
 export const MenuWrapper = styled.div`
   color: var(--color-darkGray);
   padding-right: 15px;
+  margin-bottom: 42px;
 `;
 
 export const MenuDivider = styled.p`

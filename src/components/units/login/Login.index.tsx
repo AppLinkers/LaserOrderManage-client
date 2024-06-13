@@ -1,5 +1,5 @@
 import * as S from "./Login.styles";
-import { useState, KeyboardEvent } from "react";
+import { useState, KeyboardEvent, useEffect } from "react";
 import { useMutation } from "@tanstack/react-query";
 import { UserApi } from "@/src/lib/apis/user/UserApi";
 import { AxiosError } from "axios";
@@ -12,6 +12,7 @@ import { emailRegex, passwordRegex } from "@/src/lib/constants/regex";
 import { AppPages } from "@/src/lib/constants/appPages";
 import KumohHead from "../../shared/layout/head/NextHead.index";
 import { errorCodeSpliter } from "@/src/lib/hooks/useApiError";
+import { KAKAO_LOGIN_URL } from "@/src/lib/constants/constant";
 
 export default function Login() {
   const [email, onChangeEmail] = useInput();
@@ -19,7 +20,7 @@ export default function Login() {
   const [errorMsg, setErrorMsg] = useState("");
   const setAuth = useSetRecoilState(authState);
   const router = useRouter();
-  const { redirect } = router.query;
+  const { redirect, code, state } = router.query;
   const [apiSending, setApiSending] = useState(false);
 
   const { mutate } = useMutation({
@@ -68,6 +69,19 @@ export default function Login() {
     }
   };
 
+  const onClickKakaoLogin = () => {
+    if (apiSending) return;
+    router.replace(KAKAO_LOGIN_URL);
+  }
+
+  useEffect(() => {
+    // 서버에 인가코드 전송 및 처리 
+    if (state == "kakao" && code !== null) {
+
+    }
+  })
+  
+
   return (
     <>
       <KumohHead title="로그인 | 금오거래센터" />
@@ -101,6 +115,9 @@ export default function Login() {
             <S.MenuDivider>|</S.MenuDivider>
             <a onClick={() => router.push(AppPages.SIGN_UP)}>회원가입</a>
           </S.MenuWrapper>
+          <S.SocialLoginButton className="bold18" onClick={onClickKakaoLogin}>
+            카카오로 로그인
+          </S.SocialLoginButton>
         </S.FormWrapper>
       </S.Wrapper>
     </>
