@@ -183,7 +183,7 @@ const PostprocessingMap = new Map<PostProcessing, PostProcessingName>([
 
 const SignupMethodMap = new Map<SignupMethod, SignupMethodName>([
   ["BASIC", "이메일 인증"],
-  ["KAKAO", "카카오"],
+  ["OAUTH_KAKAO", "카카오"],
 ]);
 
 export const getOrderStatus = (key: OrderStage) => OrderStageMap.get(key);
