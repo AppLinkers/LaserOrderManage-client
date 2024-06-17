@@ -91,7 +91,7 @@ export default function FindEmail() {
                 <div>
                   {result.contents.map((el) => (
                     <S.ResultItem key={el.email}>
-                      <S.Result className="bold18">{`(${getSignupMethod(el.signupMethod)}) ${el.email}`}</S.Result>
+                      <S.Result className="bold18">{`${getSignupMethod(el.signupMethod)}${el.email}`}</S.Result>
                     </S.ResultItem>
                   ))}
                 </div>

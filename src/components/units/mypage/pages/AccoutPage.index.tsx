@@ -13,7 +13,7 @@ import {
   useInputWithRegex,
 } from "@/src/lib/hooks/useInput";
 import { numberRegex } from "@/src/lib/constants/regex";
-import { getFullAddress } from "@/src/lib/utils/utils";
+import { getFullAddress, getSignupMethod } from "@/src/lib/utils/utils";
 import { useSetRecoilState } from "recoil";
 import { myInfoState } from "@/src/store/myInfo";
 import { UserApi } from "@/src/lib/apis/user/UserApi";
@@ -287,7 +287,7 @@ export default function AccountPage({ authorityList }: IAccoutPageProps) {
             <S.InfoWrapper>
               {userAccount && (
                 <InfoInputItem
-                label="이메일"
+                label={`이메일${getSignupMethod(userAccount.signupMethod)}`}
                 value={userAccount.email}
                 needEdit={false}
               />

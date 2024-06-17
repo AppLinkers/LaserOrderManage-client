@@ -2,7 +2,7 @@ import { IBaseListSimpleResponse } from "@/src/lib/apis/base/base.types";
 
 export type UserAuthority = "ROLE_CUSTOMER" | "ROLE_FACTORY" | "AUTHORITY_ADMIN" | null;
 
-export type SignupMethodName = "이메일 인증" | "카카오";
+export type SignupMethodName = "" | "(카카오)";
 export type SignupMethod = "BASIC" | "OAUTH_KAKAO";
 
 export type ILoginRequest = {
