@@ -6,6 +6,7 @@ import {
   PostProcessing,
   PostProcessingName,
 } from "../apis/order/Order.types";
+import { SignupMethod, SignupMethodName } from "../apis/user/User.types";
 
 export const getNowDate = () => {
   const date = new Date();
@@ -180,12 +181,19 @@ const PostprocessingMap = new Map<PostProcessing, PostProcessingName>([
   ["plating", "도금"],
 ]);
 
+const SignupMethodMap = new Map<SignupMethod, SignupMethodName>([
+  ["BASIC", "이메일 인증"],
+  ["KAKAO", "카카오"],
+]);
+
 export const getOrderStatus = (key: OrderStage) => OrderStageMap.get(key);
 
 export const getManufacuring = (key: Manufacturing) =>
   ManufacturingMap.get(key)!!;
 
 const getPostprocessing = (key: PostProcessing) => PostprocessingMap.get(key)!!;
+
+export const getSignupMethod = (key: SignupMethod) => SignupMethodMap.get(key)!!;
 
 export const getManufacurings = (keys: Manufacturing[]) => {
   const manufacturings: string[] = [];

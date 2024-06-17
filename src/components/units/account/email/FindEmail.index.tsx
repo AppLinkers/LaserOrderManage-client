@@ -10,6 +10,7 @@ import { useInputWithError } from "@/src/lib/hooks/useInput";
 import { useMutation } from "@tanstack/react-query";
 import { useRouter } from "next/router";
 import { useState } from "react";
+import { getSignupMethod } from "@/src/lib/utils/utils";
 
 export default function FindEmail() {
   const [result, setResult] = useState<IFindEmailResponse | null>(null);
@@ -90,7 +91,7 @@ export default function FindEmail() {
                 <div>
                   {result.contents.map((el) => (
                     <S.ResultItem key={el.email}>
-                      <S.Result className="bold18">{el.email}</S.Result>
+                      <S.Result className="bold18">{`(${getSignupMethod(el.signupMethod)}) ${el.email}`}</S.Result>
                     </S.ResultItem>
                   ))}
                 </div>

@@ -1,5 +1,5 @@
 import * as S from "./Login.styles";
-import { useState, KeyboardEvent, useEffect } from "react";
+import { useState, KeyboardEvent } from "react";
 import { useMutation } from "@tanstack/react-query";
 import { UserApi } from "@/src/lib/apis/user/UserApi";
 import { AxiosError } from "axios";
@@ -73,14 +73,6 @@ export default function Login() {
     if (apiSending) return;
     router.replace(KAKAO_LOGIN_URL);
   }
-
-  useEffect(() => {
-    // 서버에 인가코드 전송 및 처리 
-    if (state == "kakao" && code !== null) {
-
-    }
-  })
-  
 
   return (
     <>

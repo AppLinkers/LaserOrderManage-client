@@ -38,6 +38,9 @@ export default function FindPassword() {
       if (errorSort === "USER" && status === 404 && errorNumber === 1) {
         emailInputArgs.showError("존재하지 않은 회원입니다.");
       }
+      if (errorSort === "USER" && status === 400 && errorNumber === 3) {
+        setToast({ comment: "소셜 계정은 비밀번호 변경을 지원하지 않습니다."})
+      }
       if (errorSort === "COMMON" && status === 500 && errorNumber === 3) {
         setToast({ comment: "메일 전송이 불가능해요" });
       }

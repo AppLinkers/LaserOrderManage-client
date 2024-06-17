@@ -4,6 +4,8 @@ import Modal, { IModalProps } from "../Modal.index";
 import * as S from "./MypageModal.styles";
 import { useToastify } from "@/src/lib/hooks/useToastify";
 import { UserApi } from "@/src/lib/apis/user/UserApi";
+import { AxiosError } from "axios";
+import { errorCodeSpliter } from "@/src/lib/hooks/useApiError";
 
 interface IEditPasswordModalProps extends IModalProps {}
 
@@ -19,9 +21,14 @@ export default function EditPasswordModal({
       setToast({ comment: "변경 메일을 발송했어요" });
       onClose();
     },
-    onError: () => {
-      setToast({ comment: "메일 전송에 실패했어요" });
-      onClose();
+    onError: (error: AxiosError) => {
+      const { errorSort, status, errorNumber } = errorCodeSpliter(error);
+      if (errorSort === "USER" && status === 400 && errorNumber === 3) {
+        setToast({ comment: "소셜 계정은 비밀번호 변경을 지원하지 않습니다."})
+      }
+      if (errorSort === "COMMON" && status === 500 && errorNumber === 3) {
+        setToast({ comment: "메일 전송이 불가능해요" });
+      }
     },
   });
 

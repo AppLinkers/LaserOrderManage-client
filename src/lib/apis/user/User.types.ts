@@ -2,6 +2,9 @@ import { IBaseListSimpleResponse } from "@/src/lib/apis/base/base.types";
 
 export type UserAuthority = "ROLE_CUSTOMER" | "ROLE_FACTORY" | "AUTHORITY_ADMIN" | null;
 
+export type SignupMethodName = "이메일 인증" | "카카오";
+export type SignupMethod = "BASIC" | "KAKAO";
+
 export type ILoginRequest = {
   email: string;
   password: string;
@@ -60,6 +63,7 @@ export type IFindEmailRequest = {
 
 export type IFindEmail = {
   name: string;
+  signupMethod: SignupMethod;
   email: string;
 };
 
@@ -82,6 +86,7 @@ export type IAccountResponse = {
   address: string;
   detailAddress: string | null;
   emailNotification: boolean;
+  signupMethod: SignupMethod;
 }
 
 export type IAccountRequest = {

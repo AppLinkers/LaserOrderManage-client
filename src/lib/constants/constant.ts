@@ -76,7 +76,7 @@ export const BASE_URL = "https://api.kumoh.org";
 export const WEB_URL = "https://www.kumoh.org";
 
 export const LOCALHOST_URL = "http://localhost:3000"
-export const KAKAO_LOGIN_REDIRECT_URL = LOCALHOST_URL + "/login";
+export const KAKAO_LOGIN_REDIRECT_URL = LOCALHOST_URL + "/signup/kakao";
 export const KAKAO_LOGIN_URL = `https://kauth.kakao.com/oauth/authorize?client_id=${process.env.NEXT_PUBLIC_KAKAO_API_KEY}&redirect_uri=${KAKAO_LOGIN_REDIRECT_URL}&response_type=code&state=kakao`;
 
 export const PORTFOLIO_LINK =

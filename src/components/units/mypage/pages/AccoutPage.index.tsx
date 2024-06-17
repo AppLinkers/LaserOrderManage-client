@@ -295,13 +295,15 @@ export default function AccountPage({ authorityList }: IAccoutPageProps) {
             </S.InfoWrapper>
             <Spacer width="20px" height="100%" />
             <S.InfoWrapper>
-              <InfoInputItem
+              {userAccount && (
+                <InfoInputItem
                 label="비밀번호"
                 value="********"
-                needEdit={true}
+                needEdit={userAccount.signupMethod === "BASIC"}
                 hideInput={true}
                 onEdit={() => setShowPasswordModal(true)}
               />
+              )}
             </S.InfoWrapper>
           </div>
           <Spacer width="100%" height="20px" />
