@@ -154,6 +154,10 @@ export const getPhoneNumber = (phone: string): string => {
   return phone.replace(/(\d{3})(\d{4})(\d{4})/, "$1-$2-$3");
 };
 
+export const formattedPhoneNumber = (phone: string): string => {
+  return phone.replace('+82 10', '010').replace(/-/g, '').replace(/\s+/g, '');
+}
+
 export const getFileSize = (fileSize: number): string => {
   if (fileSize < 1024) {
     return `${fileSize.toFixed(2)} B`;

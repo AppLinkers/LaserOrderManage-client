@@ -20,7 +20,7 @@ export default function Login() {
   const [errorMsg, setErrorMsg] = useState("");
   const setAuth = useSetRecoilState(authState);
   const router = useRouter();
-  const { redirect, code, state } = router.query;
+  const { redirect } = router.query;
   const [apiSending, setApiSending] = useState(false);
 
   const { mutate } = useMutation({

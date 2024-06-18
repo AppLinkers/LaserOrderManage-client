@@ -10,6 +10,10 @@ export type ILoginRequest = {
   password: string;
 };
 
+export type IKakaoLoginRequest = {
+  kakaoAccessToken: string;
+}
+
 export type IToken = {
   authorityList: UserAuthority[];
   grantType: string;
@@ -48,6 +52,16 @@ export type IJoinRequest = {
   address: string;
   detailAddress: string | null;
 };
+
+export type IKakaoJoinRequest = {
+  email: string;
+  name: string;
+  companyName: string | null;
+  phone: string;
+  zipCode: string;
+  address: string;
+  detailAddress: string | null;
+}
 
 export type IJoinResponse = {
   email: string;

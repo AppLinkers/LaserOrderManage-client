@@ -8,20 +8,78 @@ import { useInputWithError, useInputWithMaxLength } from "@/src/lib/hooks/useInp
 import { Address } from "react-daum-postcode";
 import { useDaumPostPopup } from "@/src/lib/hooks/useDaumPostPopup";
 import { useToastify } from "@/src/lib/hooks/useToastify";
+import { useMutation } from "@tanstack/react-query";
+import { UserApi } from "@/src/lib/apis/user/UserApi";
+import { setCredentials } from "@/src/lib/utils/setCredentials";
+import { useSetRecoilState } from "recoil";
+import { authState } from "@/src/store/auth";
+import { AppPages } from "@/src/lib/constants/appPages";
+import { AxiosError } from "axios";
+import { errorCodeSpliter } from "@/src/lib/hooks/useApiError";
+import { KakaoApi } from "@/src/lib/apis/external/KakaoApi";
+import { formattedPhoneNumber } from "@/src/lib/utils/utils";
+import { IKakaoJoinRequest } from "@/src/lib/apis/user/User.types";
 
 export default function SignUp() {
   const router = useRouter();
-  const { redirect, code, state } = router.query;
+  const setAuth = useSetRecoilState(authState);
+  const { code } = router.query;
   const { setToast } = useToastify();
+  const [kakaoAccessToken, setKakaoAccessToken] = useState("");
 
-  useEffect(() => {
-    // 서버에 인가코드 전송 및 처리 
-    if (state == "kakao" && code !== null) {
-      // 기본 계정 존재 시, -> toast 로 안내
-      // 카카오 계정 존재 시, -> token 정보 저장 및 redirect
-      // 카카오 계정 존재 X, -> 회원가입 진행 (정보 설정)
+  const { mutate: getKakaoAccessTokenMutate } = useMutation({
+    mutationFn: KakaoApi.GET_KAKAO_ACCESS_TOKEN,
+    onSuccess: (data) => {
+      // 카카오 Token 을 활용한 카카오 로그인 수행
+      setKakaoAccessToken(data.access_token);
     }
   })
+
+  const { mutate: getKakaoAccountMutate } = useMutation({
+    mutationFn: KakaoApi.GET_KAKAO_ACCOUNT,
+    onSuccess: (data) => {
+      setEmail(data.kakao_account.email);
+      setName(data.kakao_account.name);
+      setPhone(formattedPhoneNumber(data.kakao_account.phone_number));
+    }
+  })
+
+  const { mutate: kakaoLoginMutate } = useMutation({
+    mutationFn: UserApi.KAKAO_LOGIN,
+    onSuccess: (data) => {
+      setCredentials(data);
+      setAuth({ isAuthenticated: true, ...data });
+      router.replace(AppPages.HOME);
+    },
+    onError: (error: AxiosError) => {
+      const { errorSort, status, errorNumber, message } = errorCodeSpliter(error);
+      if (errorSort === "USER" && status === 400 && errorNumber === 4) {
+        setToast({comment: "동일한 이메일의 계정이 존재합니다."});
+        router.push(AppPages.LOGIN);
+      }
+      if (errorSort === "USER" && status === 404 && errorNumber === 1){
+        // 회원 정보 수신 및 설정
+        getKakaoAccountMutate(kakaoAccessToken);
+      }
+    },
+  });
+
+  useEffect(() => {
+    if (code !== undefined && !Array.isArray(code)) {
+      // 카카오 인가코드를 활용한 카카오 Token 받기
+      getKakaoAccessTokenMutate(code);
+    }
+  }, [code]);
+
+  useEffect(() => {
+    if (kakaoAccessToken) {
+      kakaoLoginMutate({kakaoAccessToken});
+    }
+  }, [kakaoAccessToken]);
+
+  const [email, setEmail] = useState("");
+  const [name, setName] = useState("");
+  const [phone, setPhone] = useState("");
 
   const companyInputArgs = useInputWithMaxLength(10);
 
@@ -41,6 +99,40 @@ export default function SignUp() {
   };
   const openPostPopup = useDaumPostPopup(addressCallback);
 
+  const kakaoJoinMutate = useMutation({
+    mutationFn: UserApi.KAKAO_JOIN,
+    onSuccess: (data) => {
+      if (data.status === "003") {
+        setToast({ comment: "회원가입을 완료했어요" });
+        router.replace(AppPages.LOGIN);
+      }
+    },
+  });
+
+  const joinAccount = () => {
+    const addressPass = addressInputArgs.passError();
+    if (
+      !(addressPass)
+    ) {
+      return;
+    }
+    const payload: IKakaoJoinRequest = {
+      email: email.trim(),
+      name: name.trim(),
+      companyName:
+        companyInputArgs.value.trim() !== ""
+          ? companyInputArgs.value.trim()
+          : null,
+      phone: phone.trim(),
+      zipCode: zoneCode,
+      address: addressInputArgs.value,
+      detailAddress:
+        detailAddressInputArgs.value.trim() !== ""
+          ? detailAddressInputArgs.value.trim()
+          : null,
+    };
+    kakaoJoinMutate.mutate(payload);
+  };
 
   return (
     <>
@@ -52,17 +144,20 @@ export default function SignUp() {
             placeHolder="이메일"
             needDefaultSpace={false}
             editable={false}
+            value={email}
           />
           <Spacer width="100%" height="24px" />
           <SignUpInput
             placeHolder="이름"
             editable={false}
             needDefaultSpace={false}
+            value={name}
           />
           <SignUpInput
             placeHolder="휴대폰 번호 (숫자만 입력해주세요)"
             editable={false}
             needDefaultSpace={false}
+            value={phone}
           />
           <SignUpInput
             placeHolder="업체명 (선택)"
@@ -92,7 +187,7 @@ export default function SignUp() {
             onChange={detailAddressInputArgs.onChange}
           />
           <Spacer width="100%" height="100px" />
-          <S.SignUpButton className="bold18" onClick={() => {}}>
+          <S.SignUpButton className="bold18" onClick={joinAccount}>
             가입하기
           </S.SignUpButton>
         </S.FormWrapper>

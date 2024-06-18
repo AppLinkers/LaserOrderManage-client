@@ -10,6 +10,8 @@ import {
   IFindPasswordRequest,
   IJoinRequest,
   IJoinResponse,
+  IKakaoJoinRequest,
+  IKakaoLoginRequest,
   ILoginRequest,
   IRequestVerifyResponse,
   IToken,
@@ -20,6 +22,10 @@ import {
 export const UserApi = {
   LOGIN: async (payload: ILoginRequest): Promise<IToken> => {
     const response = await axiosPublic.post("/user/login", payload);
+    return response.data;
+  },
+  KAKAO_LOGIN: async (payload: IKakaoLoginRequest): Promise<IToken> => {
+    const response = await axiosPublic.post("/user/login/kakao", payload);
     return response.data;
   },
   REISSUE: async (): Promise<IToken> => {
@@ -44,6 +50,10 @@ export const UserApi = {
   },
   JOIN: async (payload: IJoinRequest): Promise<IJoinResponse> => {
     const response = await axiosPublic.post("/user/customer", payload);
+    return response.data;
+  },
+  KAKAO_JOIN: async (payload: IKakaoJoinRequest) : Promise<IJoinResponse> => {
+    const response = await axiosPublic.post("/user/kakao/customer", payload);
     return response.data;
   },
   FIND_EMAIL: async (
